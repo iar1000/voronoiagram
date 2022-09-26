@@ -5,12 +5,9 @@
 The Voronoi Diagram describes a partitioning of a plane (or volume) into finitely many cells, given a set of target points.
 Each cell defines a set of points, consisting of one target point and all points in the plane (or volume) that are closer to that point, than to any other of the target points.
 
-Given a space $\Omega$ with distance function $d: \Omega \times \Omega \rightarrow \R$ and a set of (indexed) target Points $T$, the Voronoi Cell sourrounding target point $k \in T$ is defined as
+Given a space $\Omega$ with distance function $d: \Omega \times \Omega \rightarrow \mathbb{R}$ and a set of (indexed) target Points $T$, the Voronoi Cell sourrounding target point $k \in T$ is defined as
 
-$$
-V_k = \{ x \in \Omega | d(x, k) \leq d(x,q), \forall q\in T. q \neq k\}.
-
-$$
+$$V_k = \{ x \in \Omega | d(x, k) \leq d(x,q), \forall q\in T. q \neq k\}.$$
 
 **Note:** We are using elements of $T$ also as index to ease the notation.
 
