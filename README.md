@@ -5,10 +5,7 @@
 The Voronoi Diagram $D$ describes a partitioning of a plane $\Omega$ into a set of cells $C$, given a set of target points $T$.
 Each cell $c_k \in C$ defines the set of points consisting of one target point $t_k \in T$ and all points in $\Omega$ that are closer to $t_k$ than to any other point in $T$, i.e.
 
-$$
-c_k = \{ x \in \Omega | d(x, t_k) \leq d(x,t_q), \forall t_q\in T. t_q \neq t_k\}.
-
-$$
+$$c_k = \{ x \in \Omega | d(x, t_k) \leq d(x,t_q), \forall t_q\in T. t_q \neq t_k\}$$
 
 , whereas the metric "closer" is defined by some distance function $d: \Omega \times \Omega \rightarrow \mathbb{R}$.
 
