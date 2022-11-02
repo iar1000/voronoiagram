@@ -78,9 +78,8 @@ The requirements of the Voronoi diagram code are:
 
 The main components of Fortune's algorithm are:
 
-1. `VoronoiDiagram`
-2. `Beachline`
-3. `EventQueue`
+1. `EdgeList` - keeps track and enables access to the beach-line
+2. `EventQueue` - priority queue for events  
 
 The main functionalities are:
 
