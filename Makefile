@@ -3,17 +3,18 @@
 .PHONY: test
 
 SRC_DIR = src
-EXE = voronoi
+_SHARED_LIB = voronoi.so
+SHARED_LIB = $(patsubst %,$(SRC_DIR)/%,$(_SHARED_LIB))
 _OBJ = voronoi.o
 OBJ = $(patsubst %,$(SRC_DIR)/%,$(_OBJ))
 
 CXX=g++
 
 all: $(OBJ)
-	$(CXX) $^ -o $(EXE)
+	$(CXX) -shared $^ -o $(SHARED_LIB)
 
 %.o: %.cpp
-	$(CXX) -c $< -o $@
+	$(CXX) -fPIC -c $< -o $@
 
 test:
 	cd test
@@ -22,4 +23,4 @@ test:
 	cd ..
 
 clean:
-	rm -rf test/data __pycache__ */__pycache__ .pytest_cache *.log
+	rm -rf test/data __pycache__ */__pycache__ .pytest_cache *.log src/*.so src/*.o
