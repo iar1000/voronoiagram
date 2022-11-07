@@ -5,7 +5,10 @@
 The Voronoi Diagram $D$ describes a partitioning of a plane $\Omega$ into a set of cells $C$, given a set of target points $T$.
 Each cell $c_k \in C$ defines the set of points consisting of one target point $t_k \in T$ and all points in $\Omega$ that are closer to $t_k$ than to any other point in $T$, i.e.
 
-$$c_k = \{ x \in \Omega | d(x, t_k) \leq d(x,t_q), \forall t_q\in T. t_q \neq t_k\}$$
+$$
+c_k = \{ x \in \Omega | d(x, t_k) \leq d(x,t_q), \forall t_q\in T. t_q \neq t_k\}
+
+$$
 
 , whereas the metric "closer" is defined by some distance function $d: \Omega \times \Omega \rightarrow \mathbb{R}$.
 
@@ -63,13 +66,20 @@ The main workflow is as follows:
 6) (C++) Return diagram as list of vertices and edges
 7) (Py ) Visualize and save diagram
 
+### Requirements
+
+The requirements of the Voronoi diagram code are:
+
+1) Given geometrical entities in two- or three-dimensional space, find the Voronoi diagram.
+2) The data structure allows accessing the geometrical entities and the Voronoi diagram using a serial (integer) number. The index access implies the entities and the Voronoi diagram are associated with each other.
+3) Fast searching for nearby entities is supported with a spatial index.
+
 ### Datastructures
 
 The main components of Fortune's algorithm are:
 
-1. `VoronoiDiagram`
-2. `Beachline`
-3. `EventQueue`
+1. `EdgeList` - keeps track and enables access to the beach-line
+2. `EventQueue` - priority queue for events  
 
 The main functionalities are:
 
