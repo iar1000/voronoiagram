@@ -70,6 +70,8 @@ void testPointBasic(){
     p1->x() = x2;
     p1->y() = y2;
     printTest("Update Point", ((p1->x() == x2) && (p1->y() == y2)));
+
+    delete p1;
 }
 
 int main(int, char **)
