@@ -1,10 +1,28 @@
 #include <iostream>
+#include <string>
+#include <algorithm>
 #include "voronoi.hpp"
 
 using namespace std;
 
+int PRINT_WIDTH = 30;
+
+void printTitle(string title){
+    cout << "--- " << title << " ---" << endl;
+}
+
+void printTest(string name, int result){
+    int l = name.length();
+    int pad = max(PRINT_WIDTH - l, 0);
+    cout << name << ": ";
+    for(int i = 0; i < pad; i++){ cout << " "; }
+    if(result == 0){ cout << "FAILED"; }
+    else{ cout << "PASSED"; }
+    cout << endl;
+}
+
 void testHalfEdgeBasic(){
-    cout << "HalfEdge (basic):" << endl;
+    printTitle("HalfEdge (basic)");
 
     HalfEdge * e = new HalfEdge();
     HalfEdge * l = new HalfEdge();
@@ -17,9 +35,9 @@ void testHalfEdgeBasic(){
     l->right() = e;
     r->left() = e;
     r->right() = l;
-    cout << "  assign left: " << (e->left() == l) << endl;
-    cout << "  assign right: " << (e->right() == r) << endl;
-    cout << "  complete circle: " << (l->left()->left()->left() == l) << endl;
+    printTest("assign left", (e->left() == l));
+    printTest("assign right", (e->right() == r));
+    printTest("assign circle", (l->left()->left()->left() == l));
 
     delete e;
     delete l;
@@ -27,7 +45,7 @@ void testHalfEdgeBasic(){
 }
 
 void testBeachlineBasic(){
-    cout << "EdgeList (basic):" << endl;
+    printTitle("Beachline (basic)");
 
     Beachline * list = new Beachline();
 
@@ -35,8 +53,9 @@ void testBeachlineBasic(){
 
 int main(int, char **)
 {
-    cout << endl << "    start c++ unit-tests ..." << endl <<
-                    "-------------------------------" << endl;
+    cout << endl << "    start c++ tests" << endl;
+    for(int i = 0; i < PRINT_WIDTH + 8; i++){ cout << "="; }
+    cout << endl;
 
     testHalfEdgeBasic();
     testBeachlineBasic();
