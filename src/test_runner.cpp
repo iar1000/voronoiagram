@@ -1,6 +1,11 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+
+#include "beachline.hpp"
+#include "point.hpp"
+#include "edge.hpp"
+#include "halfedge.hpp"
 #include "voronoi.hpp"
 
 using namespace std;
