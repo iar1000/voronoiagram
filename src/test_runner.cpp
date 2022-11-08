@@ -74,6 +74,27 @@ void testPointBasic(){
     delete p1;
 }
 
+void testEventComparison(){
+    printTitle("Event comparison");
+
+    CompareEvents* comparator = new CompareEvents();
+    Point* p1 = new Point(69.0, 420.0, 0); Event* e1 = new PointEvent(p1);
+    Point* p2 = new Point(70.0, 420.0, 1); Event* e2 = new PointEvent(p2);
+    Point* p3 = new Point(70.0, 11.0, 2); Event* e3 = new PointEvent(p3);
+
+    printTest("Compare y1 < y2", (*comparator)(e3, e1));
+    printTest("Compare y1 > y2", !((*comparator)(e1, e3)));
+    printTest("Compare y1==y2 and x1 > x2", (*comparator)(e2, e1));
+    printTest("Compare y1==y2 and x1==x2", !((*comparator)(e1, e1)));
+
+    delete p1;
+    delete p2;
+    delete p3;
+    delete e1;
+    delete e2;
+    delete e3;
+}
+
 int main(int, char **)
 {
     cout << endl << "    start c++ tests" << endl;
@@ -82,7 +103,7 @@ int main(int, char **)
 
     testHalfEdgeBasic();
     testPointBasic();
-    //testEventComparison();
+    testEventComparison();
     //testBeachlineBasic();
 
     return 0;

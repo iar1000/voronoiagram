@@ -6,6 +6,8 @@
 
 class Event {
 
+    Point* m_point;
+
     public:
         virtual bool isPointEvent();
         virtual bool isCircleEvent();
@@ -39,6 +41,11 @@ class CircleEvent : public Event {
 
         bool isValid();
         void invalidate();
+};
+
+class CompareEvents {
+    public:
+        bool operator()(Event* e1, Event* e2);
 };
 
 #endif
