@@ -9,7 +9,7 @@ TEST_EXEC = $(patsubst %,$(SRC_DIR)/%,$(_TEST_EXEC))
 _SHARED_LIB = fortune.so
 SHARED_LIB = $(patsubst %,$(SRC_DIR)/%,$(_SHARED_LIB))
 
-_OBJ = fortune.o voronoi.o test_runner.o event.o
+_OBJ = fortune.o voronoi.o test_runner.o event.o point.o
 OBJ = $(patsubst %,$(SRC_DIR)/%,$(_OBJ))
 _HEADERS = voronoi.hpp beachline.hpp point.hpp edge.hpp halfedge.hpp
 HEADERS = $(patsubst %,$(SRC_DIR)/%,$(_HEADERS))

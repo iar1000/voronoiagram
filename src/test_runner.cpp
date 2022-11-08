@@ -7,6 +7,7 @@
 #include "edge.hpp"
 #include "halfedge.hpp"
 #include "voronoi.hpp"
+#include "event.hpp"
 
 using namespace std;
 
@@ -56,6 +57,21 @@ void testBeachlineBasic(){
 
 }
 
+void testPointBasic(){
+    printTitle("Point (basic)");
+
+    double x1 = 1.0;
+    double x2 = 11.0;
+    double y1 = 420.0;
+    double y2 = 69.0;
+    Point* p1 = new Point(x1, y1, 1);
+    printTest("Create Point", ((p1->x() == x1) && (p1->y() == y1)));
+
+    p1->x() = x2;
+    p1->y() = y2;
+    printTest("Update Point", ((p1->x() == x2) && (p1->y() == y2)));
+}
+
 int main(int, char **)
 {
     cout << endl << "    start c++ tests" << endl;
@@ -63,7 +79,9 @@ int main(int, char **)
     cout << endl;
 
     testHalfEdgeBasic();
-    testBeachlineBasic();
+    testPointBasic();
+    //testEventComparison();
+    //testBeachlineBasic();
 
     return 0;
 }
