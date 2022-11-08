@@ -79,7 +79,7 @@ The requirements of the Voronoi diagram code are:
 The main components of Fortune's algorithm are:
 
 1. `EdgeList` - keeps track and enables access to the beach-line
-2. `EventQueue` - priority queue for events  
+2. `EventQueue` - priority queue for events
 
 The main functionalities are:
 
@@ -100,22 +100,22 @@ Will follow when coding has started
 
 * Build: `make`
 * Version control: `git`
-* Testing infrastructure: `pytest`
+* Testing infrastructure: `pytest` and c++-feasability checks
 * Documentation: `README.md` and inline
 
 ## Schedule
 
 Week 1 (10/31): (Py ) read in points, setup testing environment
 
-Week 2 (11/7):  (C++) develop and implement `VoronoiDiagram`, `BeachLine` and `EventQueue` datastructures (w/o functionality)
+Week 2 (11/7):  (C++) develop and implement datastructures (w/o functionality) for `Beachline` and `EventQueue`
 
-Week 3 (11/14): (C++) add functionality to `EventQueue` and `VoronoiDiagram`
+Week 3 (11/14): (C++) add functionality to `EventQueue`
 
 Week 4 (11/21): (C++) add functionality to `BeachLine`
 
 Week 5 (11/28): (Py ) finish C++ connector and implement module interface
 
-Week 6 (12/5):  (Py ) testing and debugging
+Week 6 (12/5):  (Py ) testing and debugging (ongoing)
 
 Week 7 (12/12): Documentation
 
