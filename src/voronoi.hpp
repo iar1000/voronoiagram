@@ -1,34 +1,16 @@
+#ifndef h_voronoi
+#define h_voronoi
 
-class Point{
-    double m_x;
-    double m_y;
-    int m_id;
-};
+#include "beachline.hpp"
+#include "point.hpp"
+#include "edge.hpp"
+#include "halfedge.hpp"
 
-class Edge{
-    int m_direction;
-};
-
-class HalfEdge{
-    HalfEdge * m_left;    // left neighbour
-    HalfEdge * m_right;   // right neighbour
-    Point * m_point;      // associated target point
-    Edge * m_edge;        // associated full edge
+class Voronoi{
 
     public:
-        HalfEdge * const left() const { return m_left; }
-        HalfEdge * left() { return m_left; }
-};
-
-class EdgeList{
-
-    HalfEdge * m_leftmost;
-    HalfEdge * m_rightmost;
-
-public:
-    EdgeList(){
-        m_leftmost = new HalfEdge();
-        m_rightmost = new HalfEdge();
-    }
+        Voronoi(){};
 
 };
+
+#endif
