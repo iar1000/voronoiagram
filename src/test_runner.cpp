@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <vector>
 
 #include "beachline.hpp"
 #include "point.hpp"
@@ -8,6 +9,7 @@
 #include "halfedge.hpp"
 #include "voronoi.hpp"
 #include "event.hpp"
+#include "fortune.hpp"
 
 using namespace std;
 
@@ -95,6 +97,25 @@ void testEventComparison(){
     delete e3;
 }
 
+void testEventQueueBasic(){
+    printTitle("EventQueue (basic)");
+
+    vector<Point*> v;
+    v.push_back(new Point(11.0, 11.0, 0));
+    v.push_back(new Point(11.0, 11.0, 1));
+    v.push_back(new Point(11.0, 11.0, 2));
+    FortuneAlgorithm* fortune = new FortuneAlgorithm(v);
+    printTest("Initialize queue", fortune->getEventQueueSize() == v.size());
+
+    bool passed = true;
+    for(int i = 0; i < v.size(); i++){
+        fortune->processNextEvent();
+        if(fortune->getEventQueueSize() != v.size() - i - 1){ passed = false; };
+    }
+    printTest("Process events (dequeing)", passed);
+}
+
+
 int main(int, char **)
 {
     cout << endl << "    start c++ tests" << endl;
@@ -104,7 +125,7 @@ int main(int, char **)
     testHalfEdgeBasic();
     testPointBasic();
     testEventComparison();
-    //testBeachlineBasic();
+    testEventQueueBasic();
 
     return 0;
 }
