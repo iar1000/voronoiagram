@@ -35,4 +35,4 @@ blabla:
 	cd ..
 
 clean:
-	rm -rf test/data __pycache__ */__pycache__ .pytest_cache *.log src/*.so src/*.o
+	rm -rf test/data __pycache__ */__pycache__ .pytest_cache *.log src/*.so src/*.o src/run_test
