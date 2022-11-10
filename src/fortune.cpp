@@ -8,6 +8,11 @@ FortuneAlgorithm::FortuneAlgorithm(vector<Point*> points){
     }
 };
 
+void FortuneAlgorithm::compute(){
+    // process all events
+    while(processNextEvent()){};
+}
+
 int FortuneAlgorithm::getEventQueueSize(){ return m_eventQueue.size(); };
 void FortuneAlgorithm::addEvent(Event* event){ m_eventQueue.push(event); };
 
@@ -33,5 +38,9 @@ bool FortuneAlgorithm::processNextEvent(){
 
 void FortuneAlgorithm::handleCircleEvent(CircleEvent* event){};
 
-void FortuneAlgorithm::handlePointEvent(PointEvent* event){};
+void FortuneAlgorithm::handlePointEvent(PointEvent* event){
+
+    Point* targetPoint = event->point();
+
+};
 

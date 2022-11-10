@@ -113,6 +113,22 @@ void testEventQueueBasic(){
         if(fortune->getEventQueueSize() != v.size() - i - 1){ passed = false; };
     }
     printTest("Process events (dequeing)", passed);
+
+    delete fortune;
+}
+
+void testFortuneAlgorithmCompute(){
+    printTitle("FortuneAlgorithm (compute)");
+
+    vector<Point*> v;
+    v.push_back(new Point(11.0, 11.0, 0));
+    v.push_back(new Point(11.0, 11.0, 1));
+    v.push_back(new Point(11.0, 11.0, 2));
+    FortuneAlgorithm* fortune = new FortuneAlgorithm(v);
+    printTest("Initialize queue", fortune->getEventQueueSize() == v.size());
+
+    fortune->compute();
+    printTest("compute() empties queue", fortune->getEventQueueSize() == 0);
 }
 
 
@@ -126,6 +142,7 @@ int main(int, char **)
     testPointBasic();
     testEventComparison();
     testEventQueueBasic();
+    testFortuneAlgorithmCompute();
 
     return 0;
 }
