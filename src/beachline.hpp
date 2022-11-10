@@ -1,25 +1,20 @@
 #ifndef h_beachline
 #define h_beachline
 
-#include "halfedge.hpp"
-#include "point.hpp"
+#include "arc.hpp"
 
 class Beachline{
 
-    HalfEdge * m_leftmost;
-    HalfEdge * m_rightmost;
+    Arc* m_leftmost;
+    Arc* m_rightmost;
 
 public:
-    Beachline(){
-        m_leftmost = new HalfEdge();
-        m_rightmost = new HalfEdge();
-        m_leftmost->right() = m_rightmost;
-        m_rightmost->left() = m_leftmost;
-    }
-    void getLeftEdge(const Point * p);
-    void insertRight(HalfEdge * he, HalfEdge * le);
-    void remove(HalfEdge * he);
+    Beachline();
 
+    bool isEmpty();
+    void initBeachline(Arc* arc);
+    void insertAfter(Arc* arc, Arc* nextArc);
+    Arc* getArcAbove(Point* p);
 };
 
 #endif

@@ -10,6 +10,7 @@
 #include "voronoi.hpp"
 #include "event.hpp"
 #include "fortune.hpp"
+#include "arc.hpp"
 
 using namespace std;
 
@@ -50,13 +51,6 @@ void testHalfEdgeBasic(){
     delete e;
     delete l;
     delete r;
-}
-
-void testBeachlineBasic(){
-    printTitle("Beachline (basic)");
-
-    Beachline * list = new Beachline();
-
 }
 
 void testPointBasic(){
@@ -129,6 +123,44 @@ void testFortuneAlgorithmCompute(){
 
     fortune->compute();
     printTest("compute() empties queue", fortune->getEventQueueSize() == 0);
+
+    delete fortune;
+}
+
+void testBeachlineBasic(){
+    printTitle("Beachline (basic)");
+
+    Beachline* b = new Beachline();
+    printTest("create empty beachline", b->isEmpty());
+
+    Point* p1 = new Point(420.0, 20.0, 0);
+    Arc* arc = new Arc(p1);
+    b->initBeachline(arc);
+    printTest("init beachline", !(b->isEmpty()));
+
+    delete b;
+    delete p1;
+    delete arc;
+}
+
+void testArcBasic(){
+    printTitle("Arc (basic)");
+
+    Point* p1 = new Point(420.0, 20.0, 0);
+    Arc* arc1 = new Arc(p1);
+    Point* p2 = new Point(420.0, 20.0, 0);
+    Arc* arc2 = new Arc(p2);
+    Point* p3 = new Point(420.0, 20.0, 0);
+    Arc* arc3 = new Arc(p3);
+
+    printTest("access constructing point y", arc1->constructingPointY() == p1->y());
+
+    delete p1;
+    delete p2;
+    delete p3;
+    delete arc1;
+    delete arc2;
+    delete arc3;
 }
 
 
@@ -143,6 +175,8 @@ int main(int, char **)
     testEventComparison();
     testEventQueueBasic();
     testFortuneAlgorithmCompute();
+    testBeachlineBasic();
+    testArcBasic();
 
     return 0;
 }
