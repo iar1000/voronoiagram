@@ -2,11 +2,12 @@
 #define h_arc
 
 #include "point.hpp"
+#include "event.hpp"
 
 class Arc{
 
     Point* m_point;
-    Event* m_circle_event;
+    CircleEvent* m_circle_event;
 
     Arc* m_left;
     Arc* m_right;

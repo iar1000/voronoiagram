@@ -83,16 +83,20 @@ void testEventBasic(){
     printTest("Compare y1==y2 and x1 > x2", (*comparator)(e2, e1));
     printTest("Compare y1==y2 and x1==x2", !((*comparator)(e1, e1)));
 
-    bool wasValid = e1->isValid();
-    e1->invalidate();
-    printTest("Invalidate events", wasValid && !(e1->isValid());
-
     delete p1;
     delete p2;
     delete p3;
     delete e1;
     delete e2;
     delete e3;
+
+    Edge* edge = new Edge();
+    CircleEvent* event = new CircleEvent(edge);
+    bool wasValid = event->isValid();
+    event->invalidate();
+    printTest("CircleEvent default validity", wasValid);
+    printTest("Invalidate CircleEvent", wasValid && !event->isValid());
+
 }
 
 void testEventQueueBasic(){
