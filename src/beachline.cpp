@@ -14,6 +14,19 @@ Arc*       & Beachline::rightmost(){ return m_rightmost; };
 Arc* const & Beachline::leftmost() const { return m_leftmost; };
 Arc*       & Beachline::leftmost(){ return m_leftmost; };
 
+// todo: needs testing
+void BeachLine::splitArc(Arc* new_arc, Arc* arc)
+{
+    Arc* duplicate = new Arc(arc->p());
+	duplicate->prev() = new_arc->prev();
+	// prev -> new_arc -> next
+	//      -> duplicate
+	insertAfter(duplicate, arc);
+	// arc -> duplicate
+	insertAfter(new_arc, arc);
+	// arc -> new_arc -> duplicate
+}
+
 void Beachline::insertAfter(Arc* new_arc, Arc* arc){
     // from:    prev -> arc -> next
     // to:      prev -> arc -> new_arc -> next

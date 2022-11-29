@@ -13,6 +13,7 @@ public:
 
     bool isEmpty();
     void initBeachline(Arc* arc);
+    void splitArc(Arc* new_arc, Arc* arc);
     void insertAfter(Arc* new_arc, Arc* arc);
     Arc* getArcAbove(Point* p);
 
