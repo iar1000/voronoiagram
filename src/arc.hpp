@@ -19,6 +19,7 @@ class Arc{
         Arc*       & next();
         bool hasNext();
         double constructingPointY();
+        double constructingPointX();
 };
 
 #endif
