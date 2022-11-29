@@ -17,10 +17,10 @@ Point* PointEvent::point(){ return m_point; };
 
 
 CircleEvent::CircleEvent(Edge* e){
-
+    m_valid = true;
 };
 bool CircleEvent::isPointEvent() { return false; };
 bool CircleEvent::isCircleEvent() { return true; };
 Point* CircleEvent::point() { return m_point; };
-bool CircleEvent::isValid(){ return valid; };
-void CircleEvent::invalidate(){ valid = false; };
+bool CircleEvent::isValid(){ return m_valid; };
+void CircleEvent::invalidate(){ m_valid = false; };

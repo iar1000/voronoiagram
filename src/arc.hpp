@@ -6,6 +6,7 @@
 class Arc{
 
     Point* m_point;
+    Event* m_circle_event;
 
     Arc* m_left;
     Arc* m_right;
@@ -17,9 +18,13 @@ class Arc{
         Arc*       & prev();
         Arc* const & next() const;
         Arc*       & next();
+        Point* const & p() const;
+        Point*       & p();
         bool hasNext();
         double constructingPointY();
         double constructingPointX();
+
+        void invalidateCircleEvent();
 };
 
 #endif

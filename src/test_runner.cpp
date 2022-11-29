@@ -70,8 +70,8 @@ void testPointBasic(){
     delete p1;
 }
 
-void testEventComparison(){
-    printTitle("Event comparison");
+void testEventBasic(){
+    printTitle("Event (basic)");
 
     CompareEvents* comparator = new CompareEvents();
     Point* p1 = new Point(69.0, 420.0, 0); Event* e1 = new PointEvent(p1);
@@ -82,6 +82,10 @@ void testEventComparison(){
     printTest("Compare y1 > y2", !((*comparator)(e1, e3)));
     printTest("Compare y1==y2 and x1 > x2", (*comparator)(e2, e1));
     printTest("Compare y1==y2 and x1==x2", !((*comparator)(e1, e1)));
+
+    bool wasValid = e1->isValid();
+    e1->invalidate();
+    printTest("Invalidate events", wasValid && !(e1->isValid());
 
     delete p1;
     delete p2;
@@ -195,7 +199,7 @@ int main(int, char **)
 
     testHalfEdgeBasic();
     testPointBasic();
-    testEventComparison();
+    testEventBasic();
     testEventQueueBasic();
     testFortuneAlgorithmCompute();
     testBeachlineBasic();

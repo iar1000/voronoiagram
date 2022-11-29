@@ -30,7 +30,7 @@ class CircleEvent : public Event {
 
     Point* m_point;
     Edge* m_edge;
-    bool valid;
+    bool m_valid;
 
     public:
         CircleEvent(Edge* e);
