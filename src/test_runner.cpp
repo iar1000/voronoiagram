@@ -33,9 +33,13 @@ void printTest(string name, int result){
 void testHalfEdgeBasic(){
     printTitle("HalfEdge (basic)");
 
-    HalfEdge * e = new HalfEdge();
-    HalfEdge * l = new HalfEdge();
-    HalfEdge * r = new HalfEdge();
+    Point* p = new Point(69, 420, 0);
+
+    HalfEdge * e = new HalfEdge(p);
+    HalfEdge * l = new HalfEdge(p);
+    HalfEdge * r = new HalfEdge(p);
+
+    printTest("target point assigned", (e->p() == p) && (l->p() == p));
 
     // l - e - r - l - e - r - ...
     e->left() = l;
@@ -48,9 +52,14 @@ void testHalfEdgeBasic(){
     printTest("assign right", (e->right() == r));
     printTest("assign circle", (l->left()->left()->left() == l));
 
+    e->opposite() = l;
+    l->opposite() = e;
+    printTest("assign opposite", (e->opposite() == l) && (l->opposite() == e));
+
     delete e;
     delete l;
     delete r;
+    delete p;
 }
 
 void testPointBasic(){
@@ -90,7 +99,7 @@ void testEventBasic(){
     delete e2;
     delete e3;
 
-    Edge* edge = new Edge();
+    Edge* edge = new Edge(p1, p2);
     CircleEvent* event = new CircleEvent(edge);
     bool wasValid = event->isValid();
     event->invalidate();
