@@ -13,8 +13,13 @@ public:
 
     bool isEmpty();
     void initBeachline(Arc* arc);
-    void insertAfter(Arc* arc, Arc* nextArc);
+    void insertAfter(Arc* new_arc, Arc* arc);
     Arc* getArcAbove(Point* p);
+
+    Arc* const & rightmost() const;
+    Arc*       & rightmost();
+    Arc* const & leftmost() const;
+    Arc*       & leftmost();
 };
 
 #endif

@@ -137,10 +137,33 @@ void testBeachlineBasic(){
     Arc* arc = new Arc(p1);
     b->initBeachline(arc);
     printTest("init beachline", !(b->isEmpty()));
+    printTest("  correct left-end", b->leftmost() == arc);
+    printTest("  correct right-end", b->rightmost() == arc);
+
+    Point* p2 = new Point(420.0, 20.0, 0);
+    Arc* arc2 = new Arc(p2);
+    Point* p3 = new Point(420.0, 20.0, 0);
+    Arc* arc3 = new Arc(p3);
+
+    b->insertAfter(arc2, arc);
+    bool correctInsertion = (b->leftmost() == arc) && (b->rightmost() == arc2)
+                                && (arc->next() == arc2);
+    printTest("correct insertion V1", correctInsertion);
+
+    b->insertAfter(arc3, arc);
+    bool correctInsertion2 = (b->leftmost() == arc) && (b->rightmost() == arc2)
+                                && (arc->next() == arc3) && (arc3->next() == arc2);
+    printTest("correct insertion V2", correctInsertion2);
+
+
 
     delete b;
     delete p1;
     delete arc;
+    delete p2;
+    delete arc2;
+    delete p3;
+    delete arc3;
 }
 
 void testArcBasic(){
