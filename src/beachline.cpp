@@ -15,10 +15,10 @@ Arc* const & Beachline::leftmost() const { return m_leftmost; };
 Arc*       & Beachline::leftmost(){ return m_leftmost; };
 
 // todo: needs testing
-void BeachLine::splitArc(Arc* new_arc, Arc* arc)
+void Beachline::splitArc(Arc* new_arc, Arc* arc)
 {
     Arc* duplicate = new Arc(arc->p());
-	duplicate->prev() = new_arc->prev();
+	duplicate->prev() = new_arc->prev(); // todo: ?
 	// prev -> new_arc -> next
 	//      -> duplicate
 	insertAfter(duplicate, arc);

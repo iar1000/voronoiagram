@@ -92,20 +92,21 @@ void testEventBasic(){
     printTest("Compare y1==y2 and x1 > x2", (*comparator)(e2, e1));
     printTest("Compare y1==y2 and x1==x2", !((*comparator)(e1, e1)));
 
+    Arc* arc = new Arc(p2);
+    CircleEvent* event = new CircleEvent(p1, 10, arc);
+    bool wasValid = event->isValid();
+    event->invalidate();
+    printTest("CircleEvent default validity", wasValid);
+    printTest("Invalidate CircleEvent", wasValid && !event->isValid());
+
+    delete event;
+    delete arc;
     delete p1;
     delete p2;
     delete p3;
     delete e1;
     delete e2;
     delete e3;
-
-    Edge* edge = new Edge(p1, p2);
-    CircleEvent* event = new CircleEvent(edge);
-    bool wasValid = event->isValid();
-    event->invalidate();
-    printTest("CircleEvent default validity", wasValid);
-    printTest("Invalidate CircleEvent", wasValid && !event->isValid());
-
 }
 
 void testEventQueueBasic(){
@@ -128,19 +129,25 @@ void testEventQueueBasic(){
     delete fortune;
 }
 
-void testFortuneAlgorithmCompute(){
-    printTitle("FortuneAlgorithm (compute)");
+void testFortuneAlgorithmBasics(){
+    printTitle("FortuneAlgorithm (basics)");
 
     vector<Point*> v;
-    v.push_back(new Point(11.0, 11.0, 0));
-    v.push_back(new Point(11.0, 11.0, 1));
-    v.push_back(new Point(11.0, 11.0, 2));
+    Point* p1 = new Point(0.0, 1.0, 0);
+    Point* p2 = new Point(11.0, 11.0, 0);
+    Point* p3 = new Point(11.0, 11.0, 0);
+    v.push_back(p1);
+    v.push_back(p2);
+    v.push_back(p3);
     FortuneAlgorithm* fortune = new FortuneAlgorithm(v);
     printTest("Initialize queue", fortune->getEventQueueSize() == v.size());
 
-    fortune->compute();
-    printTest("compute() empties queue", fortune->getEventQueueSize() == 0);
+    Point* middle = fortune->findCircleCenter(0, 1, 2, 1, 1, 2);
+    printTest("find circle center", middle->x() == 1 && middle->y() == 1);
 
+    delete p1;
+    delete p2;
+    delete p3;
     delete fortune;
 }
 
@@ -224,7 +231,7 @@ int main(int, char **)
     testPointBasic();
     testEventBasic();
     testEventQueueBasic();
-    testFortuneAlgorithmCompute();
+    testFortuneAlgorithmBasics();
     testBeachlineBasic();
     testArcBasic();
 
