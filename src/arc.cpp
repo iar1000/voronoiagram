@@ -3,16 +3,19 @@
 Arc::Arc(Point* p){
     m_point = p;
     m_circle_event = 0;
-    m_left = m_right = 0;
+    m_prev_arc = m_next_arc = 0;
+    m_edge_l = m_edge_r = 0;
 }
 
-Arc* const & Arc::prev() const  { return m_left; };
-Arc*       & Arc::prev()        { return m_left; };
-Arc* const & Arc::next() const { return m_right; };
-Arc*       & Arc::next()       { return m_right; };
-bool Arc::hasNext(){ return m_right; };
+Arc* const & Arc::prev() const  { return m_prev_arc; };
+Arc*       & Arc::prev()        { return m_prev_arc; };
+Arc* const & Arc::next() const { return m_next_arc; };
+Arc*       & Arc::next()       { return m_next_arc; };
+bool Arc::hasNext(){ return m_next_arc; };
 Point* const & Arc::p() const { return m_point; };
 Point*       & Arc::p() { return m_point; };
+Edge* const & Arc::edge_l() const { return m_edge_l; };
+Edge*       & Arc::edge_l() { return m_edge_l; };
 
 double Arc::constructingPointY(){ return m_point->y(); };
 double Arc::constructingPointX(){ return m_point->x(); };

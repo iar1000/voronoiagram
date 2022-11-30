@@ -192,6 +192,16 @@ void testArcBasic(){
     Arc* arc2 = new Arc(p2);
     Point* p3 = new Point(420.0, 20.0, 0);
     Arc* arc3 = new Arc(p3);
+    printTest("initialization", (arc1->prev() == 0) && (arc1->next() == 0) && (arc1->edge_l() == 0));
+
+    arc2->next() = arc3;
+    arc3->next() = arc1;
+    arc1->next() = arc2;
+    arc2->prev() = arc3;
+    arc3->prev() = arc1;
+    arc1->prev() = arc2;
+    printTest("connectivity forward", arc1->next()->next()->next() == arc1);
+    printTest("connectivity backward", arc3->prev()->prev()->prev() == arc3);
 
     printTest("access constructing point y", arc1->constructingPointY() == p1->y());
 

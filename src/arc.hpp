@@ -9,8 +9,11 @@ class Arc{
     Point* m_point;
     CircleEvent* m_circle_event;
 
-    Arc* m_left;
-    Arc* m_right;
+    Arc* m_next_arc;
+    Arc* m_prev_arc;
+
+    Edge* m_edge_l;
+    Edge* m_edge_r;
 
     public:
         Arc(Point* p);
@@ -21,6 +24,8 @@ class Arc{
         Arc*       & next();
         Point* const & p() const;
         Point*       & p();
+        Edge* const & edge_l() const;
+        Edge*       & edge_l();
         bool hasNext();
         double constructingPointY();
         double constructingPointX();
