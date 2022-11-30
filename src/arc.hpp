@@ -2,7 +2,9 @@
 #define h_arc
 
 #include "point.hpp"
-#include "event.hpp"
+#include "edge.hpp"
+
+class CircleEvent;
 
 class Arc{
 

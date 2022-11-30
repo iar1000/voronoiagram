@@ -16,11 +16,14 @@ bool PointEvent::isCircleEvent(){ return false; };
 Point* PointEvent::point(){ return m_point; };
 
 
-CircleEvent::CircleEvent(Edge* e){
+CircleEvent::CircleEvent(Point* center, double radius, Arc* arc){
+    m_center = center;
+    m_radius = radius;
+    m_arc = arc;
     m_valid = true;
 };
 bool CircleEvent::isPointEvent() { return false; };
 bool CircleEvent::isCircleEvent() { return true; };
-Point* CircleEvent::point() { return m_point; };
+Point* CircleEvent::point() { return m_center; };
 bool CircleEvent::isValid(){ return m_valid; };
 void CircleEvent::invalidate(){ m_valid = false; };

@@ -2,7 +2,7 @@
 #define h_event
 
 #include "point.hpp"
-#include "edge.hpp"
+#include "arc.hpp"
 
 class Event {
 
@@ -28,12 +28,13 @@ class PointEvent : public Event {
 
 class CircleEvent : public Event {
 
-    Point* m_point;
-    Edge* m_edge;
+    Point* m_center;
+    double m_radius;
+    Arc* m_arc;
     bool m_valid;
 
     public:
-        CircleEvent(Edge* e);
+        CircleEvent(Point* center, double radius, Arc* arc);
 
         virtual bool isPointEvent();
         virtual bool isCircleEvent();
