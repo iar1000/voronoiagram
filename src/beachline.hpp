@@ -16,6 +16,7 @@ public:
     void splitArc(Arc* new_arc, Arc* arc);
     void insertAfter(Arc* new_arc, Arc* arc);
     Arc* getArcAbove(Point* p);
+    void squeezeArc(Arc* to_remove, Edge* new_edge);
 
     Arc* const & rightmost() const;
     Arc*       & rightmost();

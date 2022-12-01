@@ -39,7 +39,77 @@ bool FortuneAlgorithm::processNextEvent(){
     return true;
 };
 
-void FortuneAlgorithm::handleCircleEvent(CircleEvent* event){};
+// todo: testing
+void FortuneAlgorithm::handleCircleEvent(CircleEvent* event){
+    // handle the squeezing of an arc event
+
+    // there are events in the queue that have been invalidated
+    if (!event->isValid()){ return; }
+
+    Arc* arc = event->arc();                // arc that is being removed
+    Arc* left = arc->prev();                // squeezer left
+    Arc* right = arc->next();               // squeezer right
+    Point* circleCenter = event->point();   // point where arc length is zero
+
+    // handle the diagram edge activity, three edges meet at circleCenter
+    Edge* outgoing = new Edge(left->p(), right->p());
+    outgoing->setStart(circleCenter);
+    arc->edge_l()->setEnd(circleCenter);
+    arc->edge_r()->setEnd(circleCenter);
+
+    // connect half-edges of left edge
+    if(arc->edge_l()->he_right()->p() == arc->p()){
+        // right half-edge belongs to same point as arcs target point
+        if(arc->edge_r()->he_right()->p() == arc->p()){
+            arc->edge_l()->he_right()->left() = arc->edge_r()->he_right();
+        } else {
+            arc->edge_l()->he_right()->left() = arc->edge_r()->he_left();
+        }
+    } else {
+        if(arc->edge_r()->he_right()->p() == arc->p()){
+            arc->edge_l()->he_left()->left() = arc->edge_r()->he_right();
+        } else {
+            arc->edge_l()->he_left()->left() = arc->edge_r()->he_left();
+        }
+    }
+
+    // connect half-edges of right edge
+    if(arc->edge_r()->he_right()->p() == right->p()){
+        // right half-edge belongs to same point as arcs target point
+        if(outgoing->he_right()->p() == right->p()){
+            arc->edge_r()->he_right()->left() = outgoing->he_right();
+        } else {
+            arc->edge_r()->he_right()->left() = outgoing->he_left();
+        }
+    } else {
+        if(outgoing->he_right()->p() == right->p()){
+            arc->edge_r()->he_left()->left() = outgoing->he_right();
+        } else {
+            arc->edge_r()->he_left()->left() = outgoing->he_left();
+        }
+    }
+
+    // connect half-edges of new edge
+    if(outgoing->he_right()->p() == left->p()){
+        // right half-edge belongs to same point as arcs target point
+        if(arc->edge_l()->he_right()->p() == left->p()){
+            outgoing->he_right()->left() = arc->edge_l()->he_right();
+        } else {
+            outgoing->he_right()->left() = arc->edge_l()->he_left();
+        }
+    } else {
+        if(arc->edge_l()->he_right()->p() == left->p()){
+            outgoing->he_left()->left() = arc->edge_l()->he_right();
+        } else {
+            outgoing->he_left()->left() = arc->edge_l()->he_left();
+        }
+    }
+
+    // update and trigger future updates of beachline
+    m_beachline->squeezeArc(arc, outgoing);
+    checkForCircleEvent(arc->prev());
+    checkForCircleEvent(arc->next());
+};
 
 void FortuneAlgorithm::handlePointEvent(PointEvent* event){
     // add new point to the beachline

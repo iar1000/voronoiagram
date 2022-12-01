@@ -2,7 +2,8 @@
 #define h_event
 
 #include "point.hpp"
-#include "arc.hpp"
+
+class Arc;
 
 class Event {
 
@@ -42,6 +43,9 @@ class CircleEvent : public Event {
 
         bool isValid();
         void invalidate();
+
+        Arc* const & arc() const;
+        Arc*       & arc();
 };
 
 class CompareEvents {

@@ -16,6 +16,8 @@ Point* const & Arc::p() const { return m_point; };
 Point*       & Arc::p() { return m_point; };
 Edge* const & Arc::edge_l() const { return m_edge_l; };
 Edge*       & Arc::edge_l() { return m_edge_l; };
+Edge* const & Arc::edge_r() const { return m_edge_r; };
+Edge*       & Arc::edge_r() { return m_edge_r; };
 
 double Arc::constructingPointY(){ return m_point->y(); };
 double Arc::constructingPointX(){ return m_point->x(); };

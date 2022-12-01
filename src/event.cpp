@@ -22,8 +22,10 @@ CircleEvent::CircleEvent(Point* center, double radius, Arc* arc){
     m_arc = arc;
     m_valid = true;
 };
-bool CircleEvent::isPointEvent() { return false; };
-bool CircleEvent::isCircleEvent() { return true; };
-Point* CircleEvent::point() { return m_center; };
+bool CircleEvent::isPointEvent(){ return false; };
+bool CircleEvent::isCircleEvent(){ return true; };
+Point* CircleEvent::point(){ return m_center; };
 bool CircleEvent::isValid(){ return m_valid; };
 void CircleEvent::invalidate(){ m_valid = false; };
+Arc* const & CircleEvent::arc() const{ return m_arc; };
+Arc*       & CircleEvent::arc(){ return m_arc; };

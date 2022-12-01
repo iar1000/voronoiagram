@@ -3,8 +3,7 @@
 
 #include "point.hpp"
 #include "edge.hpp"
-
-class CircleEvent;
+#include "event.hpp"
 
 class Arc{
 
@@ -28,6 +27,8 @@ class Arc{
         Point*       & p();
         Edge* const & edge_l() const;
         Edge*       & edge_l();
+        Edge* const & edge_r() const;
+        Edge*       & edge_r();
         bool hasNext();
         double constructingPointY();
         double constructingPointX();
