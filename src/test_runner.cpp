@@ -11,6 +11,7 @@
 #include "event.hpp"
 #include "fortune.hpp"
 #include "arc.hpp"
+#include "voronoi.hpp"
 
 using namespace std;
 
@@ -116,7 +117,8 @@ void testEventQueueBasic(){
     v.push_back(new Point(11.0, 11.0, 0));
     v.push_back(new Point(11.0, 11.0, 1));
     v.push_back(new Point(11.0, 11.0, 2));
-    FortuneAlgorithm* fortune = new FortuneAlgorithm(v);
+    Voronoi* voronoi = new Voronoi(v);
+    FortuneAlgorithm* fortune = new FortuneAlgorithm(voronoi, v);
     printTest("Initialize queue", fortune->getEventQueueSize() == v.size());
 
     bool passed = true;
@@ -127,6 +129,7 @@ void testEventQueueBasic(){
     printTest("Process events (dequeing)", passed);
 
     delete fortune;
+    delete voronoi;
 }
 
 void testFortuneAlgorithmBasics(){
@@ -139,7 +142,8 @@ void testFortuneAlgorithmBasics(){
     v.push_back(p1);
     v.push_back(p2);
     v.push_back(p3);
-    FortuneAlgorithm* fortune = new FortuneAlgorithm(v);
+    Voronoi* voronoi = new Voronoi(v);
+    FortuneAlgorithm* fortune = new FortuneAlgorithm(voronoi, v);
     printTest("Initialize queue", fortune->getEventQueueSize() == v.size());
 
     Point* middle = fortune->findCircleCenter(0, 1, 2, 1, 1, 2);
@@ -149,6 +153,7 @@ void testFortuneAlgorithmBasics(){
     delete p2;
     delete p3;
     delete fortune;
+    delete voronoi;
 }
 
 void testBeachlineBasic(){
@@ -220,6 +225,9 @@ void testArcBasic(){
     delete arc3;
 }
 
+void testComputation(){
+
+}
 
 int main(int, char **)
 {
@@ -234,6 +242,8 @@ int main(int, char **)
     testFortuneAlgorithmBasics();
     testBeachlineBasic();
     testArcBasic();
+
+    testComputation();
 
     return 0;
 }

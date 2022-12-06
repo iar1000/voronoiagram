@@ -3,7 +3,10 @@
 #include "fortune.hpp"
 #include "arc.hpp"
 
-FortuneAlgorithm::FortuneAlgorithm(vector<Point*> points){
+FortuneAlgorithm::FortuneAlgorithm(Voronoi* diagram, vector<Point*> points){
+
+    m_diagram = diagram;
+
     // create events for all target points
     for (vector<Point*>::iterator it = points.begin(); it != points.end(); it++){
         addEvent(new PointEvent(*it));
@@ -53,6 +56,7 @@ void FortuneAlgorithm::handleCircleEvent(CircleEvent* event){
 
     // handle the diagram edge activity, three edges meet at circleCenter
     Edge* outgoing = new Edge(left->p(), right->p());
+    m_diagram->addEdge(outgoing);
     outgoing->setStart(circleCenter);
     arc->edge_l()->setEnd(circleCenter);
     arc->edge_r()->setEnd(circleCenter);
@@ -122,15 +126,19 @@ void FortuneAlgorithm::handlePointEvent(PointEvent* event){
         return;
     };
 
-    // insert newly constructed arc to beachline
+    // insert newly constructed arc to beachline and save it in the vornoi diagram
     Arc* oldArc = m_beachline->getArcAbove(targetPoint);
     if(oldArc){
         oldArc->invalidateCircleEvent();
-        arc->edge_l() = new Edge(oldArc->p(), targetPoint);
+        Edge* e = new Edge(oldArc->p(), targetPoint);
+        m_diagram->addEdge(e);
+        arc->edge_l() = e;
 		m_beachline->splitArc(arc, oldArc);
     } else {
         Arc* rightmost = m_beachline->rightmost();
-        arc->edge_l() = new Edge(rightmost->p(), targetPoint);
+        Edge* e = new Edge(rightmost->p(), targetPoint);
+        m_diagram->addEdge(e);
+        arc->edge_l() = e;
 		m_beachline->insertAfter(arc, rightmost);
     }
 

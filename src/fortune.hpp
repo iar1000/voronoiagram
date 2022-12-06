@@ -7,17 +7,19 @@
 #include "event.hpp"
 #include "edge.hpp"
 #include "beachline.hpp"
+#include "voronoi.hpp"
 
 using namespace std;
 
 class FortuneAlgorithm{
 
+    Voronoi* m_diagram;
     priority_queue<Event*, vector<Event*>, CompareEvents> m_eventQueue;
     Beachline* m_beachline;
     double m_sweeplineY;
 
     public:
-        FortuneAlgorithm(vector<Point*> points);
+        FortuneAlgorithm(Voronoi* diagram, vector<Point*> points);
 
         void compute();
 

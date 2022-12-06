@@ -124,3 +124,14 @@ Arc* Beachline::getArcAbove(Point* p){
 
 	return 0;
 };
+
+void Beachline::squeezeArc(Arc* to_remove, Edge* new_edge){
+    // remove the arc from the beachline, add the new edge instead
+    if (!to_remove->prev()){ m_leftmost = to_remove->next(); }
+    if (to_remove->next()){ to_remove->next()->edge_l() = new_edge; }
+    else { m_rightmost = to_remove->prev(); }
+
+    // remove the link
+    if(to_remove->prev()){ to_remove->prev()->next() = to_remove->next(); }
+    if(to_remove->next()){ to_remove->next()->prev() = to_remove->prev(); }
+};
