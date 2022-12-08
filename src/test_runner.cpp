@@ -2,6 +2,7 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include "spdlog/cfg/argv.h"
 
 #include "beachline.hpp"
 #include "point.hpp"
@@ -118,15 +119,8 @@ void testEventQueueBasic(){
     v.push_back(new Point(11.0, 11.0, 1));
     v.push_back(new Point(11.0, 11.0, 2));
     Voronoi* voronoi = new Voronoi(v);
-    FortuneAlgorithm* fortune = new FortuneAlgorithm(voronoi, v);
+    FortuneAlgorithm* fortune = new FortuneAlgorithm(voronoi);
     printTest("Initialize queue", fortune->getEventQueueSize() == v.size());
-
-    bool passed = true;
-    for(int i = 0; i < v.size(); i++){
-        fortune->processNextEvent();
-        if(fortune->getEventQueueSize() != v.size() - i - 1){ passed = false; };
-    }
-    printTest("Process events (dequeing)", passed);
 
     delete fortune;
     delete voronoi;
@@ -143,7 +137,7 @@ void testFortuneAlgorithmBasics(){
     v.push_back(p2);
     v.push_back(p3);
     Voronoi* voronoi = new Voronoi(v);
-    FortuneAlgorithm* fortune = new FortuneAlgorithm(voronoi, v);
+    FortuneAlgorithm* fortune = new FortuneAlgorithm(voronoi);
     printTest("Initialize queue", fortune->getEventQueueSize() == v.size());
 
     Point* middle = fortune->findCircleCenter(0, 1, 2, 1, 1, 2);
@@ -162,29 +156,31 @@ void testBeachlineBasic(){
     Beachline* b = new Beachline();
     printTest("create empty beachline", b->isEmpty());
 
-    Point* p1 = new Point(420.0, 20.0, 0);
+    Point* p1 = new Point(1, 1, 0);
     Arc* arc = new Arc(p1);
     b->initBeachline(arc);
     printTest("init beachline", !(b->isEmpty()));
     printTest("  correct left-end", b->leftmost() == arc);
     printTest("  correct right-end", b->rightmost() == arc);
 
-    Point* p2 = new Point(420.0, 20.0, 0);
+    Point* p2 = new Point(2, 2, 0);
     Arc* arc2 = new Arc(p2);
-    Point* p3 = new Point(420.0, 20.0, 0);
+    Point* p3 = new Point(3.0, 3, 0);
     Arc* arc3 = new Arc(p3);
 
     b->insertAfter(arc2, arc);
     bool correctInsertion = (b->leftmost() == arc) && (b->rightmost() == arc2)
-                                && (arc->next() == arc2);
-    printTest("correct insertion V1", correctInsertion);
+                                && (arc->next() == arc2) && (arc2->prev() == arc);
+    printTest("correct insertion V1 (forward)", correctInsertion);
 
     b->insertAfter(arc3, arc);
     bool correctInsertion2 = (b->leftmost() == arc) && (b->rightmost() == arc2)
                                 && (arc->next() == arc3) && (arc3->next() == arc2);
-    printTest("correct insertion V2", correctInsertion2);
+    printTest("correct insertion V2 (forward)", correctInsertion2);
 
-
+    bool correctInsertion2back = (b->leftmost() == arc) && (b->rightmost() == arc2)
+                                && (arc3->prev() == arc) && (arc3->next() == arc2) && (arc2->prev() == arc3);
+    printTest("correct insertion V2 (backward)", correctInsertion2back);
 
     delete b;
     delete p1;
@@ -226,12 +222,29 @@ void testArcBasic(){
 }
 
 void testComputation(){
+    // try a calculation to test end-to-end
+    vector<Point*> target_points;
+    target_points.push_back(new Point(0, 3, 0));
+    target_points.push_back(new Point(2, 3, 1));
+    target_points.push_back(new Point(3, 0, 2));
+    target_points.push_back(new Point(3, 2, 2));
+    target_points.push_back(new Point(3, 4, 2));
+    target_points.push_back(new Point(3, 6, 2));
+    target_points.push_back(new Point(4, 3, 3));
+    target_points.push_back(new Point(6, 3, 3));
+    Voronoi* voronoi = new Voronoi(target_points);
+    FortuneAlgorithm* fortune = new FortuneAlgorithm(voronoi);
 
+    fortune->compute();
 }
 
-int main(int, char **)
+int main(int argc, char *argv[])
 {
-    cout << endl << "    start c++ tests" << endl;
+    // logger
+    spdlog::cfg::load_argv_levels(argc, argv);
+
+    // script
+    cout << endl << "    run unit tests" << endl;
     for(int i = 0; i < PRINT_WIDTH + 8; i++){ cout << "="; }
     cout << endl;
 
@@ -242,6 +255,10 @@ int main(int, char **)
     testFortuneAlgorithmBasics();
     testBeachlineBasic();
     testArcBasic();
+
+    cout << endl << "    run algorithm tests" << endl;
+    for(int i = 0; i < PRINT_WIDTH + 8; i++){ cout << "="; }
+    cout << endl;
 
     testComputation();
 

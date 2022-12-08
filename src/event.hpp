@@ -13,6 +13,7 @@ class Event {
         virtual bool isPointEvent();
         virtual bool isCircleEvent();
         virtual Point* point();
+        virtual std::string asString();
 };
 
 class PointEvent : public Event {
@@ -25,6 +26,7 @@ class PointEvent : public Event {
         virtual bool isPointEvent();
         virtual bool isCircleEvent();
         virtual Point* point();
+        virtual std::string asString();
 };
 
 class CircleEvent : public Event {
@@ -40,6 +42,7 @@ class CircleEvent : public Event {
         virtual bool isPointEvent();
         virtual bool isCircleEvent();
         virtual Point* point();
+        virtual std::string asString();
 
         bool isValid();
         void invalidate();

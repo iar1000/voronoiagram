@@ -19,7 +19,7 @@ class FortuneAlgorithm{
     double m_sweeplineY;
 
     public:
-        FortuneAlgorithm(Voronoi* diagram, vector<Point*> points);
+        FortuneAlgorithm(Voronoi* diagram);
 
         void compute();
 

@@ -16,7 +16,7 @@ class Edge{
 
 public:
     Edge(Point* left, Point* right);
-
+    std::string asString();
     void setStart(Point* p);
     void setEnd(Point* p);
     HalfEdge* const & he_right() const;

@@ -1,27 +1,41 @@
 
 #include <math.h>
+#include "spdlog/spdlog.h"
+
 #include "fortune.hpp"
 #include "arc.hpp"
 
-FortuneAlgorithm::FortuneAlgorithm(Voronoi* diagram, vector<Point*> points){
+FortuneAlgorithm::FortuneAlgorithm(Voronoi* diagram){
+    spdlog::info("fortune - create Fortune Algorithm");
 
     m_diagram = diagram;
+    const std::vector<Point*>& points = m_diagram->getTargetPoints();
 
     // create events for all target points
-    for (vector<Point*>::iterator it = points.begin(); it != points.end(); it++){
+    for (vector<Point*>::const_iterator it = points.begin(); it != points.end(); ++it){
         addEvent(new PointEvent(*it));
     }
 
     m_beachline = new Beachline();
 };
 
-void FortuneAlgorithm::compute(){ while(processNextEvent()){}; };
+void FortuneAlgorithm::compute(){ 
+    spdlog::info("fortune - compute Voronoi Diagram (n_target_points={0})", m_eventQueue.size()); 
+    while(processNextEvent()){}; 
+    spdlog::info("fortune - computed Voronoi Diagram"); 
+    m_diagram->logReport();
+
+};
 int FortuneAlgorithm::getEventQueueSize(){ return m_eventQueue.size(); };
-void FortuneAlgorithm::addEvent(Event* event){ m_eventQueue.push(event); };
+void FortuneAlgorithm::addEvent(Event* event){ 
+    m_eventQueue.push(event); 
+    spdlog::debug("fortune - add {0}", event->asString());
+};
 
 bool FortuneAlgorithm::processNextEvent(){
     // check if there are events left
     if (m_eventQueue.empty()){
+        spdlog::debug("fortune - empty Event Queue"); 
         return false;
     }
 
@@ -31,10 +45,18 @@ bool FortuneAlgorithm::processNextEvent(){
 
     // update sweepline and handle event
     m_sweeplineY = nextEvent->point()->y();
+
+    spdlog::debug(""); 
+    spdlog::debug("fortune - ********* PROCESS NEW EVENT ***********"); 
+    spdlog::debug("fortune - ********* BEACHLINE AT y={} ***********", m_sweeplineY); 
+
+    // log
+    spdlog::debug("fortune - process {0}", nextEvent->asString()); 
+
     if (nextEvent->isPointEvent()){
-        handlePointEvent(dynamic_cast<PointEvent*>(nextEvent));
+        handlePointEvent((PointEvent*)(nextEvent));
     } else {
-        handleCircleEvent(dynamic_cast<CircleEvent*>(nextEvent));
+        handleCircleEvent((CircleEvent*)(nextEvent));
     }
 
     // cleanup and return
@@ -50,6 +72,8 @@ void FortuneAlgorithm::handleCircleEvent(CircleEvent* event){
     if (!event->isValid()){ return; }
 
     Arc* arc = event->arc();                // arc that is being removed
+    spdlog::debug("fortune - handle {0} of {1}", event->asString(), arc->asString()); 
+
     Arc* left = arc->prev();                // squeezer left
     Arc* right = arc->next();               // squeezer right
     Point* circleCenter = event->point();   // point where arc length is zero
@@ -58,6 +82,7 @@ void FortuneAlgorithm::handleCircleEvent(CircleEvent* event){
     Edge* outgoing = new Edge(left->p(), right->p());
     m_diagram->addEdge(outgoing);
     outgoing->setStart(circleCenter);
+ 
     arc->edge_l()->setEnd(circleCenter);
     arc->edge_r()->setEnd(circleCenter);
 
@@ -116,6 +141,9 @@ void FortuneAlgorithm::handleCircleEvent(CircleEvent* event){
 };
 
 void FortuneAlgorithm::handlePointEvent(PointEvent* event){
+    spdlog::debug("fortune - handle {0}", event->asString()); 
+    spdlog::debug("fortune - insert new Arc");
+
     // add new point to the beachline
     Point* targetPoint = event->point();
     Arc* arc = new Arc(targetPoint);
@@ -127,25 +155,30 @@ void FortuneAlgorithm::handlePointEvent(PointEvent* event){
     };
 
     // insert newly constructed arc to beachline and save it in the vornoi diagram
-    Arc* oldArc = m_beachline->getArcAbove(targetPoint);
-    if(oldArc){
-        oldArc->invalidateCircleEvent();
-        Edge* e = new Edge(oldArc->p(), targetPoint);
+    Arc* aboveArc = m_beachline->getArcAbove(targetPoint);
+    if(aboveArc){
+        spdlog::debug("fortune - found arc above {0}", aboveArc->asString());
+        aboveArc->invalidateCircleEvent();
+        // create new edge and save it in diagram
+        Edge* e = new Edge(aboveArc->p(), targetPoint);
         m_diagram->addEdge(e);
         arc->edge_l() = e;
-		m_beachline->splitArc(arc, oldArc);
+		m_beachline->splitArc(arc, aboveArc);
     } else {
+        spdlog::debug("fortune - found no arc above");
         Arc* rightmost = m_beachline->rightmost();
         Edge* e = new Edge(rightmost->p(), targetPoint);
         m_diagram->addEdge(e);
         arc->edge_l() = e;
 		m_beachline->insertAfter(arc, rightmost);
     }
+    spdlog::debug("fortune - done inserting Arc");
 
     // check if inserting the new arc squeezed some other arc to non-existence
     // i.e. if an edge has to be drawn
 	checkForCircleEvent(arc->prev());
 	checkForCircleEvent(arc->next());
+    spdlog::debug("fortune - done handling {0}", event->asString()); 
 };
 
 // from https://www.geeksforgeeks.org/equation-of-circle-when-three-points-on-the-circle-are-given/
@@ -184,19 +217,27 @@ Point* FortuneAlgorithm::findCircleCenter(double x1, double y1, double x2, doubl
 
 // todo: testing
 void FortuneAlgorithm::checkForCircleEvent(Arc* arc){
-    // check if an arc is squeezed to death by two other arcs, thus creating an edge
-
+    // check if an arc is squeezed to death by two other arcs, thus creating an edge   
     if(!arc){ return; }
+    spdlog::debug("fortune - check {0} for CicleEvent", arc->asString());
     arc->invalidateCircleEvent();
 
-    // if the arc is splitting another one, no circle event can happen
-    if(arc->prev() && arc->next() && arc->prev() == arc->next()){ return; }
-
+    // if the arc is clean splitting another one or at the edge, no circle event can happen, as nothing can get squished
+    if(!(arc->prev()) || !(arc->next())){
+        spdlog::debug("fortune - arc {0} on the edge, no CicleEvent", arc->asString());
+        return;    
+    }
+    if(arc->prev() == arc->next()){ 
+        spdlog::debug("fortune - arc {0} clean splitting, no CicleEvent possible", arc->asString());
+        return; 
+    }
 
     // span vectors through the three points
     Point* p_prev = arc->prev()->p();
     Point* p = arc->p();
     Point* p_next = arc->next()->p();
+
+    spdlog::debug("fortune - try circle {0}, {1} and {2}", p_prev->asString(), p->asString(), p_next->asString());
 
     double l1_x = p_next->x() - p_prev->x();
     double l1_y = p_next->y() - p_prev->y();
@@ -205,17 +246,24 @@ void FortuneAlgorithm::checkForCircleEvent(Arc* arc){
 
     // don't know what this cases are
     bool allAligned = (l1_x * l2_y - l1_y * l2_x == 0);
-    if (allAligned && (p_prev->x() < p_next->x() || p_next->x() < p->x())){ return; }
+    if (allAligned && (p_prev->x() < p_next->x() || p_next->x() < p->x())){ 
+        spdlog::debug("fortune - points on a line, no circle");
+        return; 
+    }
 
     bool clockwise = (l1_x * l2_y - l1_y * l2_x < 0);
-    if (clockwise){ return; }
+    if (clockwise){ 
+        spdlog::debug("fortune - points clockwise, no circle");
+        return; }
 
     // create new circle event
     Point* circleCenter = findCircleCenter(p_prev->x(), p_prev->y(), p->x(), p->y(), p_next->x(), p_next->y());
     double circleRadius = sqrt((p->x() - circleCenter->x())*(p->x() - circleCenter->x()) + (p->y() - circleCenter->y())*(p->y() - circleCenter->y()));
 
     // todo: down know what this is doing
-    if(circleCenter->y() - circleRadius > m_sweeplineY){ return; };
+    if(circleCenter->y() - circleRadius > m_sweeplineY){ 
+        spdlog::debug("fortune - circle center not at sweepline, no circle");
+        return; };
 
 	addEvent(new CircleEvent(circleCenter, circleRadius, arc));
 }

@@ -14,7 +14,10 @@ std::vector<Edge*> m_edges;
 public:
     Voronoi(std::vector<Point*> points);
 
+    const std::vector<Point*>& getTargetPoints() const;
     void addEdge(Edge* e);
+
+    void logReport();
 
 };
 

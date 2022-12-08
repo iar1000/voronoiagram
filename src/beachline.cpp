@@ -1,13 +1,18 @@
 #include "beachline.hpp"
 
 #include <cmath>
+#include "spdlog/spdlog.h"
+
 
 Beachline::Beachline(){
     m_leftmost = m_rightmost = 0;
 }
 
 bool Beachline::isEmpty(){ return (m_leftmost == 0) && (m_rightmost == 0); };
-void Beachline::initBeachline(Arc* arc){ m_leftmost = m_rightmost = arc; };
+void Beachline::initBeachline(Arc* arc){ 
+    spdlog::debug("beachline - initialize with {0}", arc->asString()); 
+    m_leftmost = m_rightmost = arc; 
+};
 
 Arc* const & Beachline::rightmost() const { return m_rightmost; };
 Arc*       & Beachline::rightmost(){ return m_rightmost; };
@@ -15,28 +20,32 @@ Arc* const & Beachline::leftmost() const { return m_leftmost; };
 Arc*       & Beachline::leftmost(){ return m_leftmost; };
 
 // todo: needs testing
-void Beachline::splitArc(Arc* new_arc, Arc* arc)
+void Beachline::splitArc(Arc* newArc, Arc* arc)
 {
+    spdlog::debug("beachline - split {1} by {0}", newArc->asString(), arc->asString()); 
     Arc* duplicate = new Arc(arc->p());
-	duplicate->prev() = new_arc->prev(); // todo: ?
-	// prev -> new_arc -> next
-	//      -> duplicate
+	duplicate->edge_l() = newArc->edge_l(); // duplicate arc will be the extension after new_arc
 	insertAfter(duplicate, arc);
-	// arc -> duplicate
-	insertAfter(new_arc, arc);
+	insertAfter(newArc, arc);
 	// arc -> new_arc -> duplicate
+    spdlog::debug("beachline - end split, new {0}", newArc->asString()); 
 }
 
-void Beachline::insertAfter(Arc* new_arc, Arc* arc){
-    // from:    prev -> arc -> next
-    // to:      prev -> arc -> new_arc -> next
+void Beachline::insertAfter(Arc* newArc, Arc* arc){
+    // from:    prev <-> arc <-> next
+    // to:      prev <-> arc <-> new_arc <-> next
 
-    if(new_arc){ new_arc->next() = arc->next(); }
-    if(arc){ arc->next() = new_arc; }
+    // link newArc to next
+    if(newArc){ newArc->next() = arc->next(); }
+    if(arc->next()){ arc->next()->prev() = newArc; }
+    // linke arc to newArc
+    if(arc){ arc->next() = newArc; }
+    if(newArc){ newArc->prev() = arc; }
 
 	if (arc==m_rightmost) {
-		m_rightmost = new_arc;
+		m_rightmost = newArc;
 	}
+    spdlog::debug("beachline - new insertion {1}", arc->asString(), newArc->asString()); 
 };
 
 // todo: needs testing

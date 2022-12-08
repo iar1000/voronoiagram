@@ -1,6 +1,9 @@
 #ifndef h_arc
 #define h_arc
 
+#include <string>
+#include <iomanip>
+
 #include "point.hpp"
 #include "edge.hpp"
 #include "event.hpp"
@@ -18,6 +21,8 @@ class Arc{
 
     public:
         Arc(Point* p);
+
+        std::string asString();
 
         Arc* const & prev() const;
         Arc*       & prev();
