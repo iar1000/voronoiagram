@@ -28,7 +28,7 @@ default: $(OBJ)
 
 test:
 	make default
-	./src/run_test
+	./src/run_test SPDLOG_LEVEL=warn
 
 debug:
 	make default

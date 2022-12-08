@@ -222,6 +222,7 @@ void testArcBasic(){
 }
 
 void testComputation(){
+    printTitle("Compute Vornoi Diagram");
     // try a calculation to test end-to-end
     vector<Point*> target_points;
     target_points.push_back(new Point(0, 3, 0));
@@ -236,6 +237,7 @@ void testComputation(){
     FortuneAlgorithm* fortune = new FortuneAlgorithm(voronoi);
 
     fortune->compute();
+    printTest("It didn't crash", true);
 }
 
 int main(int argc, char *argv[])
@@ -255,11 +257,6 @@ int main(int argc, char *argv[])
     testFortuneAlgorithmBasics();
     testBeachlineBasic();
     testArcBasic();
-
-    cout << endl << "    run algorithm tests" << endl;
-    for(int i = 0; i < PRINT_WIDTH + 8; i++){ cout << "="; }
-    cout << endl;
-
     testComputation();
 
     return 0;
