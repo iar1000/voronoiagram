@@ -76,16 +76,16 @@ The requirements of the Voronoi diagram code are:
 
 ### Datastructures
 
-The main components of Fortune's algorithm are:
+The main datastructures of Fortune's algorithm are:
 
-1. `EdgeList` - keeps track and enables access to the beach-line
-2. `EventQueue` - priority queue for events  
+1. `Beachline` - keeps track and enables access to the beach-line
+2. `EventQueue` - priority queue for events
 
 The main functionalities are:
 
 1. insert and delete `PointEvent` and `CircleEvent` to `EventQueue`
 2. add and delete arc to `BeachLine`
-3. Check for new `CircleEvenet`
+3. Check for new `CircleEvent`
 4. Add vertices and edges to `VoronoiDiagram`
 
 ### Testing
@@ -100,22 +100,22 @@ Will follow when coding has started
 
 * Build: `make`
 * Version control: `git`
-* Testing infrastructure: `pytest`
+* Testing infrastructure: `pytest` and c++-feasability checks
 * Documentation: `README.md` and inline
 
 ## Schedule
 
 Week 1 (10/31): (Py ) read in points, setup testing environment
 
-Week 2 (11/7):  (C++) develop and implement `VoronoiDiagram`, `BeachLine` and `EventQueue` datastructures (w/o functionality)
+Week 2 (11/7):  (C++) develop and implement datastructures (w/o functionality) for `Beachline` and `EventQueue`
 
-Week 3 (11/14): (C++) add functionality to `EventQueue` and `VoronoiDiagram`
+Week 3 (11/14): (C++) add functionality to `EventQueue`
 
 Week 4 (11/21): (C++) add functionality to `BeachLine`
 
 Week 5 (11/28): (Py ) finish C++ connector and implement module interface
 
-Week 6 (12/5):  (Py ) testing and debugging
+Week 6 (12/5):  (Py ) testing and debugging (ongoing)
 
 Week 7 (12/12): Documentation
 
@@ -126,3 +126,4 @@ Week 8 (12/19): Presentation and buffer for previous weeks
 [Reference Project Proposals](https://yyc.solvcon.net/en/latest/nsd/schedule/22au_nycu/schedule.html#voronoi-diagram)
 [Guodong Rong (2006), Jump flooding in gpu with applications to voronoi diagram and distance transform](https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.101.8568&rank=1&q=Jump%20Flooding%20in%20GPU%20with%20Applications%20to%20Voronoi%20Diagram&osm=&ossid=)
 [Guodong Rong (2007), Variants of Jump Flooding Algorithm for Computing Discrete Voronoi Diagrams](https://ieeexplore.ieee.org/document/4276119)
+[Voronoi Diagram explained](https://blog.ivank.net/fortunes-algorithm-and-implementation.html)  
