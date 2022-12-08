@@ -42,12 +42,9 @@ void Voronoi::logReport(){
 		spdlog::debug("{0}", ss.str());	
 	}
 
-	
-
 	spdlog::debug("");	
 	spdlog::debug("Edges:");	
 	for(int i = 0; i < m_edges.size(); i++){
 		spdlog::debug("{0}", m_edges.at(i)->asString());
 	}
-
 }

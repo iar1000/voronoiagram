@@ -4,27 +4,27 @@
 
 SRC_DIR = src
 
+_FILES = fortune voronoi test_runner event point beachline arc edge halfedge
+SOURCE = $(patsubst %,$(SRC_DIR)/%.cpp,$(_FILES))
+OBJ = $(patsubst %,$(SRC_DIR)/%.o,$(_FILES))
+
 _TEST_EXEC = run_test
 TEST_EXEC = $(patsubst %,$(SRC_DIR)/%,$(_TEST_EXEC))
-_SHARED_LIB = fortune.so
-SHARED_LIB = $(patsubst %,$(SRC_DIR)/%,$(_SHARED_LIB))
 
-_OBJ = fortune.o voronoi.o test_runner.o event.o point.o beachline.o arc.o edge.o halfedge.o
-OBJ = $(patsubst %,$(SRC_DIR)/%,$(_OBJ))
-_HEADERS = voronoi.hpp beachline.hpp point.hpp edge.hpp halfedge.hpp
-HEADERS = $(patsubst %,$(SRC_DIR)/%,$(_HEADERS))
+_LIB = voronoi_lib
+LIB = $(patsubst %,$(SRC_DIR)/%,$(_LIB))
+LIB_SUFFIX = `python3-config --extension-suffix`
+LIB_SOURCE = $(patsubst %,$(LIB).cpp, $(_LIB))
+
 
 CXX = g++ 
 INCLUDES = -I. -I/opt/homebrew/Cellar/spdlog/1.10.0_1/include -I/opt/homebrew/Cellar/fmt/9.1.0/include
+INCLUDES_LIB = -shared -fPIC `python3-config --includes` `python3 -m pybind11 --includes`
 LINKING = -L/opt/homebrew/Cellar/fmt/9.1.0/lib -lfmt
 FLAGS = -std=c++11
 
 default: $(OBJ)
 	$(CXX) $^ -o $(TEST_EXEC) $(LINKING)
-	$(CXX) -shared $^ -o $(SHARED_LIB) $(LINKING)
-
-%.o: %.cpp
-	$(CXX) $(FLAGS) $(INCLUDES) $^ -o $@ -c
 
 test:
 	make default
@@ -33,6 +33,12 @@ test:
 debug:
 	make default
 	./src/run_test SPDLOG_LEVEL=debug
+
+shared: $(SOURCE) $(LIB_SOURCE)
+	$(CXX) $(FLAGS) $(INCLUDES) $(INCLUDES_LIB) $^ -o $(LIB)$(LIB_SUFFIX) $(LINKING)	
+
+%.o: %.cpp
+	$(CXX) $(FLAGS) $(INCLUDES) $^ -o $@ -c
 
 blabla:
 	cd test
