@@ -22,5 +22,5 @@ PYBIND11_MODULE(Voronoi, m) {
         .def("__getitem__", [](Matrix &self, std::pair<size_t, size_t> index) { return self(index.first, index.second); })
         .def("__eq__", &operator==)
         .def_property("nrow", &Matrix::nrow, nullptr)
-        .def_property("ncol", &Matrix::ncol, nullptr); /*
+        .def_property("ncol", &Matrix::ncol, nullptr); */
 }
