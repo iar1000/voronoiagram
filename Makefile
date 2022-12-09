@@ -21,7 +21,7 @@ CXX = g++
 INCLUDES = -I. -I/opt/homebrew/Cellar/spdlog/1.10.0_1/include -I/opt/homebrew/Cellar/fmt/9.1.0/include
 INCLUDES_LIB = -shared -fPIC `python3-config --includes` `python3 -m pybind11 --includes`
 LINKING = -L/opt/homebrew/Cellar/fmt/9.1.0/lib -lfmt
-FLAGS = -std=c++11
+FLAGS = -std=c++14 -undefined dynamic_lookup `python3-config --ldflags`
 
 default: $(OBJ)
 	$(CXX) $^ -o $(TEST_EXEC) $(LINKING)
@@ -29,6 +29,7 @@ default: $(OBJ)
 test:
 	make default
 	./src/run_test SPDLOG_LEVEL=warn
+	pytest ./src/test_runner.py
 
 debug:
 	make default
