@@ -7,6 +7,8 @@
 Voronoi::Voronoi(std::vector<Point*> points){ m_target_points = points; }
 
 const std::vector<Point*>& Voronoi::getTargetPoints() const { return m_target_points; }
+const std::vector<Edge*>& Voronoi::getEdges() const { return m_edges; };
+
 void Voronoi::addEdge(Edge* e){ 
 	m_edges.push_back(e); 
 	spdlog::debug("voronoi - add {0} (n_edges={1})", e->asString(), m_edges.size());	

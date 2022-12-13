@@ -31,3 +31,12 @@ HalfEdge* const & Edge::he_right() const { return m_he_right; };
 HalfEdge*       & Edge::he_right() { return m_he_right; };
 HalfEdge* const & Edge::he_left() const { return m_he_left; };
 HalfEdge*       & Edge::he_left() { return m_he_left; };
+
+Point* const & Edge::leftTarget() const { return m_left_target; };
+Point*       & Edge::leftTarget(){ return m_left_target; };
+Point* const & Edge::rightTarget() const{ return m_right_target; };
+Point*       & Edge::rightTarget(){ return m_right_target; };
+Point* const & Edge::startPoint() const{ return m_start; };
+Point*       & Edge::startPoint(){ return m_start; };
+Point* const & Edge::endPoint() const{ return m_end; };
+Point*       & Edge::endPoint(){ return m_end; };
