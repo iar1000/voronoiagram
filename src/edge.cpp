@@ -17,7 +17,8 @@ Edge::Edge(Point* left, Point* right){
 }
 std::string Edge::asString(){ 
 	std::stringstream ss;
-	ss << (m_start ? m_start->asString() : "(0)") << "--" << (m_end ? m_end->asString() : "(0)");
+	ss << (m_start ? m_start->asString() : "(0)") << "--" << (m_end ? m_end->asString() : "(0)")
+	    << ", tl=" << m_left_target->asString() << ", tr=" << m_right_target->asString();
 	return "E(" + ss.str() + ")"; // + m_left_target->asString() + " | " + m_right_target->asString() + ")"; 
 };
 void Edge::setStart(Point* p){ 
