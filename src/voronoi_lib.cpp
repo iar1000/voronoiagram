@@ -12,17 +12,17 @@ PYBIND11_MODULE(voronoi_lib, m) {
     m.doc() = "compute the voronoi diagram of a set of 2D-points with the fortune algorithm";
 
     py::class_<Point>(m, "Point")
-        .def(py::init<size_t, size_t, size_t>(), "2D point")
+        .def(py::init<double, double, size_t>(), "2D point")
         .def("x", [](Point& p) { return p.x(); })
         .def("x", [](Point& p, double d) { p.x() = d; })
         .def("y", [](Point& p) { return p.y(); })
         .def("y", [](Point& p, double d) { p.y() = d; });
 
     py::class_<Edge>(m, "Edge")
-        .def("left_target", [](Edge& e) { return e.leftTarget(); })
-        .def("right_target", [](Edge& e) { return e.rightTarget(); })
-        .def("start_point", [](Edge& e) { return e.startPoint(); })
-        .def("end_point", [](Edge& e) { return e.endPoint(); });
+        .def("left_target", [](Edge& e) { return e.leftTarget(); }, pybind11::return_value_policy::reference)
+        .def("right_target", [](Edge& e) { return e.rightTarget(); }, pybind11::return_value_policy::reference)
+        .def("start_point", [](Edge& e) { return e.startPoint(); }, pybind11::return_value_policy::reference)
+        .def("end_point", [](Edge& e) { return e.endPoint(); }, pybind11::return_value_policy::reference);
 
     py::class_<Voronoi>(m, "Voronoi")
         .def(py::init<std::vector<Point*>>(), "Voronoi Diagram")
