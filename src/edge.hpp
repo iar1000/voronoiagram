@@ -23,6 +23,14 @@ public:
     HalfEdge*       & he_right();
     HalfEdge* const & he_left() const;
     HalfEdge*       & he_left();
+    Point* const & leftTarget() const;
+    Point*       & leftTarget();
+    Point* const & rightTarget() const;
+    Point*       & rightTarget();
+    Point* const & startPoint() const;
+    Point*       & startPoint();
+    Point* const & endPoint() const;
+    Point*       & endPoint();
 };
 
 #endif

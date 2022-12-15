@@ -3,10 +3,16 @@
 
 #include "voronoi.hpp"
 #include "spdlog/spdlog.h"
+#include "spdlog/cfg/env.h"
 
-Voronoi::Voronoi(std::vector<Point*> points){ m_target_points = points; }
+Voronoi::Voronoi(std::vector<Point*> points){
+    spdlog::cfg::load_env_levels();
+    m_target_points = points;
+}
 
 const std::vector<Point*>& Voronoi::getTargetPoints() const { return m_target_points; }
+const std::vector<Edge*>& Voronoi::getEdges() const { return m_edges; };
+
 void Voronoi::addEdge(Edge* e){ 
 	m_edges.push_back(e); 
 	spdlog::debug("voronoi - add {0} (n_edges={1})", e->asString(), m_edges.size());	
@@ -42,12 +48,9 @@ void Voronoi::logReport(){
 		spdlog::debug("{0}", ss.str());	
 	}
 
-	
-
 	spdlog::debug("");	
 	spdlog::debug("Edges:");	
 	for(int i = 0; i < m_edges.size(); i++){
 		spdlog::debug("{0}", m_edges.at(i)->asString());
 	}
-
 }
