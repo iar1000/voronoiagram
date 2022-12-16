@@ -12,9 +12,11 @@ import logging
 from src.Helpers import *
 from src.Point import Point
 from src.Edge import Edge
+from src.Entity import Entity
 from lib.voronoi_lib import Point as Point_cpp
 from lib.voronoi_lib import Voronoi as Voronoi_cpp
 from lib.voronoi_lib import Fortune as Fortune_cpp
+from shapely.geometry import Point as Point_shapely
 
 logger = logging.getLogger()
 
@@ -25,6 +27,7 @@ class Voronoi:
         self.target_points = None
         self.edges = None
         self.boundary = None
+        self.entities = None
 
     def plot(self, show=True):
         logger.debug(f"plot diagram, show={show}")
@@ -35,31 +38,19 @@ class Voronoi:
         fig, ax = plt.subplots()
 
         plt.style.use('seaborn-whitegrid')
-        xs, ys = [], []
-        for p in self.target_points:
-            x, y = p.coordinates()
-            xs.append(x)
-            ys.append(y)
-
-        ax.scatter(xs, ys, marker="X")
-
-        # plot edges
-        if self.edges:
-            for e in self.edges:
-                logger.debug(f"plot {e}")
-                x1, y1, x2, y2 = e.for_plot()
-                plt.plot((x1, x2), (y1, y2), color="black")
+        for e_id in self.entities:
+            self.entities[e_id].plot(fig, ax)
 
         # plot boundary
         if self.boundary:
             for i in range(len(self.boundary)):
                 x1, y1 = self.boundary[i]
                 x2, y2 = self.boundary[(i + 1) % len(self.boundary)]
-                plt.plot((x1, x2), (y1, y2), color="red")
+                # ax.plot((x1, x2), (y1, y2), color="red")
         if show:
             plt.show()
 
-    def compute(self):
+    def compute(self, boundary_buffer=1):
         logger.info("start voronoi diagram computation...")
         voronoi_cpp = Voronoi_cpp([p.to_cpp() for p in self.target_points])
         fortune = Fortune_cpp(voronoi_cpp)
@@ -68,8 +59,11 @@ class Voronoi:
         all_edges = [Edge(e_cpp) for e_cpp in voronoi_cpp.get_edges()]
         self.edges = [e for e in all_edges if e.nonzero_length()]
         logger.debug(f"received {len(all_edges)} diagram edges, purged {len(all_edges) - len(self.edges)}")
+        self.set_boundary(buffer=boundary_buffer)
+        self.bound_edges()
+        self.compute_entities()
 
-    def bound_edges(self, puffer=2):
+    def set_boundary(self, buffer):
         # find bounding box
         min_x, min_y = sys.float_info.max, sys.float_info.max
         max_x, max_y = sys.float_info.min, sys.float_info.min
@@ -83,15 +77,23 @@ class Voronoi:
                 min_y = y
             if y > max_y:
                 max_y = y
-        min_x -= puffer
-        max_x += puffer
-        min_y -= puffer
-        max_y += puffer
+        min_x -= buffer
+        max_x += buffer
+        min_y -= buffer
+        max_y += buffer
         self.boundary = [[min_x, min_y],
                          [min_x, max_y],
                          [max_x, max_y],
                          [max_x, min_y]]
         logger.debug(f"boundary set: {self.boundary}")
+
+    def bound_edges(self):
+        """bound all the unboud edges of the returned diagram by the bounding box"""
+        logger.info(f"bound edges with boundary {self.boundary}")
+
+        if not self.edges or not self.target_points:
+            logger.warning(f"cannot bound edges, targets={self.target_points}, edges={self.edges}")
+            return
 
         # bound all unbound edges
         for e in self.edges:
@@ -102,11 +104,52 @@ class Voronoi:
                 xn, yn = e.get_normal()
                 ln = line((x, y), (x + 100000 * xn, y + 100000 * yn))
                 for i in range(len(self.boundary)):
-                    lb = line((self.boundary[i][0], self.boundary[i][1]), (self.boundary[(i + 1) % 4][0], self.boundary[(i + 1) % 4][1]))
+                    lb = line((self.boundary[i][0], self.boundary[i][1]),
+                              (self.boundary[(i + 1) % 4][0], self.boundary[(i + 1) % 4][1]))
                     intersect = intersection(ln, lb)
                     if intersect:
                         x, y = intersect
                         e.bound(x, y)
+
+    def compute_entities(self):
+        """creates the voronoi entities"""
+        logger.debug("compute entities")
+
+        # create entities
+        entities = dict()
+        for p in self.target_points:
+            entities[p.id()] = Entity(p)
+
+        # add the outline points to the corresponding entities
+        for e in self.edges:
+            for ids in e.get_adjacent_target_ids():
+                for bp in e.get_endpoints():
+                    entities[ids].add_border_point(bp)
+        self.entities = entities
+
+        # add border points to the respective entities
+        for bp in self.boundary:
+            bp_point_shapely = Point_shapely(bp)
+            bp_point = Point(bp[0], bp[1])
+            min_d = None
+            min_e = None
+            for e_id in self.entities:
+                if not min_d or \
+                        self.entities[e_id].distance_to_target(bp_point_shapely) < min_d:
+                    min_d = self.entities[e_id].distance_to_target(bp_point_shapely)
+                    min_e = self.entities[e_id]
+            min_e.add_border_point(bp_point)
+
+        for e_id in self.entities:
+            self.entities[e_id].compute_polygon()
+
+    def save(self, filepath: str):
+        """saves the diagram as json"""
+        filetype = filepath.split(".")[1]
+        if filetype != "json":
+            logger.warning(f"didn't save diagram, incompatible filetype {filetype}")
+            return
+        logger.info(f"save diagram in '{filepath}'...")
 
     def read_points(self, filepath: str):
         """reading in target points from csv or json source"""
@@ -123,8 +166,8 @@ class Voronoi:
                 for row in reader:
                     assert len(row) == 2, f"csv parsing error, to many coordinates on row {row_count}: '{row}'"
                     try:
-                        x, y = float(row[0]), float(row[1])
-                        points.append(Point(x, y))
+                        x, y, t_id = float(row[0]), float(row[1]), int(row[2])
+                        points.append(Point(x, y, target_id=t_id))
                     except ValueError:
                         raise TypeError(f"csv parsing error, coordinate type not numerical on row {row_count}: '{row}'")
                     row_count = row_count + 1
@@ -134,8 +177,8 @@ class Voronoi:
                 data = json.load(file)
                 row_count = 0
                 for p_dict in data["points"]:
-                    x, y = float(p_dict["x"]), float(p_dict["y"])
-                    points.append(Point(x, y))
+                    x, y, t_id = float(p_dict["x"]), float(p_dict["y"]), int(p_dict["id"])
+                    points.append(Point(x, y, t_id))
                     row_count = row_count + 1
         else:
             raise TypeError(f"input filetype '{filetype}' not supported, convert to 'csv' or 'json'")

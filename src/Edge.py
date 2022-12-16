@@ -10,11 +10,19 @@ class Edge:
 
     def __init__(self, e: Edge_cpp):
         self.e = e
-        self.left_target = Point(e.left_target().x(), e.left_target().y()) if e.left_target() else None
-        self.right_target = Point(e.right_target().x(), e.right_target().y()) if e.right_target() else None
-        self.start_point = Point(e.start_point().x(), e.start_point().y()) if e.start_point() else None
-        self.end_point = Point(e.end_point().x(), e.end_point().y()) if e.end_point() else None
+        self.left_target = Point(e.left_target().x(), e.left_target().y(), e.left_target().t_id()) if e.left_target() else None
+        self.right_target = Point(e.right_target().x(), e.right_target().y(), e.right_target().t_id()) if e.right_target() else None
+        self.start_point = Point(e.start_point().x(), e.start_point().y(), e.start_point().t_id()) if e.start_point() else None
+        self.end_point = Point(e.end_point().x(), e.end_point().y(), e.end_point().t_id()) if e.end_point() else None
         logger.debug(f"created {str(self)}")
+
+    def get_adjacent_target_ids(self):
+        """returns the target point id's of the adjacent targets"""
+        return [self.left_target.id(), self.right_target.id()]
+
+    def get_endpoints(self):
+        """returns start and endpoint of the edge"""
+        return [self.start_point, self.end_point]
 
     def nonzero_length(self):
         if self.start_point and self.end_point:
