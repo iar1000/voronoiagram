@@ -17,6 +17,8 @@ class Point{
         double       & x();
         double const & y() const;
         double       & y();
+        int const    & id() const;
+        int          & id();
 };
 
 #endif

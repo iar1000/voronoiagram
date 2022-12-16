@@ -12,11 +12,12 @@ PYBIND11_MODULE(voronoi_lib, m) {
     m.doc() = "compute the voronoi diagram of a set of 2D-points with the fortune algorithm";
 
     py::class_<Point>(m, "Point")
-        .def(py::init<double, double, size_t>(), "2D point")
+        .def(py::init<double, double, int>(), "2D point")
         .def("x", [](Point& p) { return p.x(); })
         .def("x", [](Point& p, double d) { p.x() = d; })
         .def("y", [](Point& p) { return p.y(); })
-        .def("y", [](Point& p, double d) { p.y() = d; });
+        .def("y", [](Point& p, double d) { p.y() = d; })
+        .def("t_id", [](Point& p) { return p.id(); });
 
     py::class_<Edge>(m, "Edge")
         .def("left_target", [](Edge& e) { return e.leftTarget(); }, pybind11::return_value_policy::reference)
