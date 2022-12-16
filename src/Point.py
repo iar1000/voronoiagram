@@ -22,6 +22,9 @@ class Point:
             self.p = Point_cpp(self.x, self.y, self.target_id)
         return self.p
 
+    def to_dict(self):
+        return {"x": self.x, "y": self.y, "id": self.target_id}
+
     def id(self):
         return self.target_id
 

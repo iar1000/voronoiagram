@@ -17,6 +17,7 @@ from lib.voronoi_lib import Point as Point_cpp
 from lib.voronoi_lib import Voronoi as Voronoi_cpp
 from lib.voronoi_lib import Fortune as Fortune_cpp
 from shapely.geometry import Point as Point_shapely
+from shapely import STRtree
 
 logger = logging.getLogger()
 
@@ -28,6 +29,8 @@ class Voronoi:
         self.edges = None
         self.boundary = None
         self.entities = None
+        self.rtree = None
+        self.rtree_index_map = None
 
     def plot(self, show=True):
         logger.debug(f"plot diagram, show={show}")
@@ -50,6 +53,14 @@ class Voronoi:
         if show:
             plt.show()
 
+    def get_target_entity_by_id(self, target_point_id):
+        """returns the shapely.Polygon representing the voronoi entity"""
+        logger.debug(f"query entity for target point {target_point_id}")
+        if not self.entities:
+            return None
+
+        return self.entities[target_point_id]
+
     def compute(self, boundary_buffer=1):
         logger.info("start voronoi diagram computation...")
         voronoi_cpp = Voronoi_cpp([p.to_cpp() for p in self.target_points])
@@ -64,6 +75,9 @@ class Voronoi:
         self.compute_entities()
 
     def set_boundary(self, buffer):
+        """define the bounding box around the target points"""
+        logger.info(f"set square boundary with buffer {buffer}")
+
         # find bounding box
         min_x, min_y = sys.float_info.max, sys.float_info.max
         max_x, max_y = sys.float_info.min, sys.float_info.min
@@ -113,7 +127,7 @@ class Voronoi:
 
     def compute_entities(self):
         """creates the voronoi entities"""
-        logger.debug("compute entities")
+        logger.info("compute entities")
 
         # create entities
         entities = dict()
@@ -143,6 +157,25 @@ class Voronoi:
         for e_id in self.entities:
             self.entities[e_id].compute_polygon()
 
+    def compute_rtree(self):
+        """computes the spatial index of the entities"""
+        logger.info("compute rtree")
+        if not self.entities:
+            return
+
+        # since we don't now if the target points are indexed sequentially,
+        # we have to store a map
+        self.rtree_index_map = dict()
+        entities = list()
+        e_counter = 0
+        for e_id in self.entities:
+            e = self.entities[e_id]
+            entities.append(e.get_polygon())
+            self.rtree_index_map[e_counter] = e.get_id()
+            e_counter += 1
+
+        self.rtree = STRtree(entities)
+
     def save(self, filepath: str):
         """saves the diagram as json"""
         filetype = filepath.split(".")[1]
@@ -150,6 +183,17 @@ class Voronoi:
             logger.warning(f"didn't save diagram, incompatible filetype {filetype}")
             return
         logger.info(f"save diagram in '{filepath}'...")
+
+        dictionary = {}
+        dictionary["points"] = list()
+        dictionary["entities"] = dict()
+        for p in self.target_points:
+            dictionary["points"].append(p.to_dict())
+        for e_id in self.entities:
+            dictionary["entities"][str(e_id)] = self.entities[e_id].get_coords_as_list_of_dict()
+
+        with open(filepath, "w") as outfile:
+            json.dump(dictionary, outfile, indent=1)
 
     def read_points(self, filepath: str):
         """reading in target points from csv or json source"""

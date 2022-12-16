@@ -14,6 +14,23 @@ class Entity:
         self.border_points = []
         self.polygon = None
 
+    def get_coords_as_list_of_dict(self):
+        """returns the coordinates of the bounding points of the entity in list of dicts format"""
+        xx, yy = self.polygon.exterior.coords.xy
+        xl, yl = xx.tolist(), yy.tolist()
+        all = list()
+        for i in range(len(xl)):
+            all.append({"x": xl[i], "y": yl[i]})
+        return all
+
+    def get_id(self):
+        """returns id of target point"""
+        return self.target_point.id()
+
+    def get_polygon(self):
+        """returns shapely polygon"""
+        return self.polygon
+
     def distance_to_target(self, p: Point_shapely):
         return p.distance(Point_shapely(self.target_point.coordinates()))
 
