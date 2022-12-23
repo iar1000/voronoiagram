@@ -31,6 +31,14 @@ class Entity:
         """returns shapely polygon"""
         return self.polygon
 
+    def is_equal(self, other):
+        """returns boolean if the entitys describe the same polygon"""
+        o = other.get_polygon()
+        if not o or not self.polygon:
+            return False
+
+        return self.polygon.equals_exact(o, 0.0001)
+
     def distance_to_target(self, p: Point_shapely):
         return p.distance(Point_shapely(self.target_point.coordinates()))
 
@@ -38,7 +46,7 @@ class Entity:
         self.border_points.append(p)
 
     def compute_polygon(self):
-        logger.debug(f"compute polygon of entity {self.target_point.id()}, n_border_points={len(self.border_points)}")
+        logger.debug(f"compute polygon of entity {self.target_point.id()}, n_border_points={self.border_points}")
         points = [(p.coordinates()[0], p.coordinates()[1]) for p in self.border_points]
         mp = MultiPoint(points)
         self.polygon = mp.convex_hull

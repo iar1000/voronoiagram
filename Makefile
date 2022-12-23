@@ -29,13 +29,13 @@ default: $(OBJ)
 %.o: %.cpp
 	$(CXX) $(FLAGS) $(INCLUDES) $^ -o $@ -c
 
-test:
+cpp:
 	make default
 	./$(TEST_DIR)/run_test SPDLOG_LEVEL=warn
 
-debug:
+cpp-debug:
 	make default
-	./src/run_test SPDLOG_LEVEL=debug
+	./$(TEST_DIR)/run_test SPDLOG_LEVEL=debug
 
 shared: $(SOURCE) $(LIB_SOURCE)
 	python3 -c 'import platform; print(platform.platform())'
@@ -43,6 +43,13 @@ shared: $(SOURCE) $(LIB_SOURCE)
 	python3 -m pybind11 --includes
 	$(CXX) $(FLAGS) $(INCLUDES) $(INCLUDES_LIB) $^ -o $(LIB_DESTINATION)$(LIB_SUFFIX) $(LINKING)
 	python3 $(TEST_DIR)/test_runner.py
+
+shared-debug: $(SOURCE) $(LIB_SOURCE)
+	python3 -c 'import platform; print(platform.platform())'
+	python3-config --ldflags
+	python3 -m pybind11 --includes
+	$(CXX) $(FLAGS) $(INCLUDES) $(INCLUDES_LIB) $^ -o $(LIB_DESTINATION)$(LIB_SUFFIX) $(LINKING)
+	python3 $(TEST_DIR)/test_runner.py -d
 
 clean:
 	rm -rf __pycache__ */__pycache__ .pytest_cache *.log lib/*.so src/*.o test/run_test

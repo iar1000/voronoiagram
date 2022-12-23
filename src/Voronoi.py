@@ -61,6 +61,19 @@ class Voronoi:
 
         return self.entities[target_point_id]
 
+    def is_equal(self, other):
+        """returns boolean value if the set of entities of the other Voronoi diagram is the same"""
+        is_equal = True
+        for p in self.target_points:
+            logger.debug(f"compare entities for target {p.id()}..")
+            check_e = other.get_target_entity_by_id(p.id())
+            if check_e and check_e.is_equal(self.entities[p.id()]):
+                logger.debug(f"different entities for target {p.id()}")
+            else:
+                logger.debug(f"same entities for target {p.id()}")
+                is_equal = False
+        return is_equal
+
     def compute(self, boundary_buffer=1):
         logger.info("start voronoi diagram computation...")
         voronoi_cpp = Voronoi_cpp([p.to_cpp() for p in self.target_points])
@@ -194,6 +207,26 @@ class Voronoi:
 
         with open(filepath, "w") as outfile:
             json.dump(dictionary, outfile, indent=1)
+
+    def read_diagram(self, filepath: str):
+        """reading in voronoi diagram from json source"""
+        logger.info(f"read voronoi diagram from '{filepath}'...")
+        self.target_points = list()
+        self.entities = dict()
+        with open(filepath, newline='\n') as file:
+            data = json.load(file)
+            for p_dict in data["points"]:
+                x, y, t_id = float(p_dict["x"]), float(p_dict["y"]), int(p_dict["id"])
+                self.target_points.append(Point(x, y, t_id))
+
+            for p in self.target_points:
+                e = Entity(p)
+                boundary = [Point(x["x"], x["y"], -1) for x in data["entities"][str(p.id())]]
+                for b in boundary:
+                    e.add_border_point(b)
+                e.compute_polygon()
+                self.entities[p.id()] = e
+        self.compute_rtree()
 
     def read_points(self, filepath: str):
         """reading in target points from csv or json source"""
