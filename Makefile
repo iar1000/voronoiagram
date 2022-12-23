@@ -52,4 +52,4 @@ shared-debug: $(SOURCE) $(LIB_SOURCE)
 	python3 $(TEST_DIR)/test_runner.py -d
 
 clean:
-	rm -rf __pycache__ */__pycache__ .pytest_cache *.log lib/*.so src/*.o test/run_test
+	rm -rf __pycache__ */__pycache__ .pytest_cache *.log lib/*.so src/*.o test/run_test voronoi-out.json
