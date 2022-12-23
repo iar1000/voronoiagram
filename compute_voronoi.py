@@ -3,7 +3,6 @@ import sys
 import os
 
 sys.path.append(".")
-sys.path.append("../")
 
 import argparse
 import logging
@@ -42,5 +41,6 @@ if __name__ == '__main__':
     voronoi = Voronoi()
     voronoi.read_points(filepath_in)
     voronoi.compute()
-    voronoi.bound_edges(puffer=1)
+    voronoi.compute_rtree()
+    voronoi.save(filepath_out)
     voronoi.plot(show=True)
