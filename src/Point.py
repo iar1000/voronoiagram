@@ -12,7 +12,7 @@ class Point:
         self.y = y
         self.target_id = -1 if target_id is None else target_id
         self.p = None
-        logger.debug(f"created {str(self)}")
+        # logger.debug(f"created {str(self)}")
 
     def coordinates(self):
         return self.x, self.y
