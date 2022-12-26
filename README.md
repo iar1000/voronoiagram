@@ -87,7 +87,7 @@ The main functionalities are:
 #### Runtime
 
 Total runtime is doing manipulations on the `Beachline` for O(n) many `Events`, each in sub-optimal O(n) time.
-This results in a total runtime in O($n^2$)
+This results in a total runtime in $O(n^2)$.
 
 ### Testing
 
