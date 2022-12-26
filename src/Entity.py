@@ -47,7 +47,7 @@ class Entity:
 
     def compute_polygon(self):
         logger.debug(f"compute polygon of entity {self.target_point.id()}, n_border_points={self.border_points}")
-        points = [(p.coordinates()[0], p.coordinates()[1]) for p in self.border_points]
+        points = [(p.coordinates()[0], p.coordinates()[1]) for p in self.border_points if p]
         mp = MultiPoint(points)
         self.polygon = mp.convex_hull
 

@@ -82,7 +82,9 @@ class Voronoi:
         fortune.compute()
         all_edges = [Edge(e_cpp) for e_cpp in voronoi_cpp.get_edges()]
         self.edges = [e for e in all_edges if e.nonzero_length()]
-        logger.debug(f"received {len(all_edges)} diagram edges, purged {len(all_edges) - len(self.edges)}")
+        logger.info(f"received {len(all_edges)} diagram edges, purged {len(all_edges) - len(self.edges)}")
+        for e in self.edges:
+            logger.debug(e)
         self.set_boundary(buffer=boundary_buffer)
         self.bound_edges()
         self.compute_entities()

@@ -97,7 +97,7 @@ def run_testcases():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Compute the Voronoi diagram of a set of points in the 2D plane')
+    parser = argparse.ArgumentParser(description='Interface and Integration test')
     parser.add_argument('-v', '--verbose', nargs="?", default='warn', const='info')
     parser.add_argument('-d', '--debug', default=False, action="store_true")
     args = parser.parse_args()
