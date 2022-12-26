@@ -110,7 +110,7 @@ if __name__ == '__main__':
     os.environ['SPDLOG_LEVEL'] = log_level  # cpp logging
 
     print()
-    print("    run python integration tests")
+    print("    run interface test")
     print("=====================================")
 
     test_point()
@@ -118,6 +118,6 @@ if __name__ == '__main__':
     test_fortune()
 
     print()
-    print("    run python case tests")
+    print("    run integration test")
     print("=====================================")
     run_testcases()
