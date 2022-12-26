@@ -84,6 +84,11 @@ The main functionalities are:
 3. Check for new `CircleEvent`, O(1)
 4. Add vertices and edges to `VoronoiDiagram`, O(1)
 
+#### Runtime
+
+Total runtime is doing manipulations on the `Beachline` for O(n) many `Events`, each in sub-optimal O(n) time.
+This results in a total runtime in O($n^2$)
+
 ### Testing
 
 Testing is done as Unit tests on the C++ level and Integration tests on the Python level.
