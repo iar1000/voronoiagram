@@ -1,4 +1,4 @@
-    # Voronoiagram
+# Voronoiagram
 
 ## Problem to solve
 
