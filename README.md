@@ -1,20 +1,17 @@
-# Voronoiagram
+    # Voronoiagram
 
 ## Problem to solve
 
 The Voronoi Diagram $D$ describes a partitioning of a plane $\Omega$ into a set of cells $C$, given a set of target points $T$.
 Each cell $c_k \in C$ defines the set of points consisting of one target point $t_k \in T$ and all points in $\Omega$ that are closer to $t_k$ than to any other point in $T$, i.e.
 
-$$
-c_k = \{ x \in \Omega | d(x, t_k) \leq d(x,t_q), \forall t_q\in T. t_q \neq t_k\}
-
-$$
+$$c_k = \{ x \in \Omega | d(x, t_k) \leq d(x,t_q), \forall t_q\in T. t_q \neq t_k\}$$
 
 , whereas the metric "closer" is defined by some distance function $d: \Omega \times \Omega \rightarrow \mathbb{R}$.
 
 ### Fortune's Algorithm
 
-The algorithm uses a __sweep line__ and a __beach line__ to create and grow new cells of the diagram. The __sweep line__ is a vertical line "moving" in one direction (we assume the direction to be from left to right from now on) through the plane, whereas points passed by the sweep line start growing their cells. The __beach line__ is a piecewise parabolar curve, consisting of a set of Arcs P, tracking cell boarders that are still growing. The beach line describes all points that are equidistant from the sweep line to the nearest target point.
+The algorithm uses a __sweep line__ and a __beach line__ to create and grow new cells of the diagram. The __sweep line__ is a horizontal line "sweeping" in one direction through the plane, whereas points passed by the sweep line start growing their voronoi cells. The __beach line__ is a piecewise parabolar curve, consisting of a set of Arcs P, tracking cell boarders that are still growing. The beach line describes all points that are equidistant from the sweep line to the nearest target point.
 
 ![](https://upload.wikimedia.org/wikipedia/commons/0/0c/Fortunes-algorithm-slowed.gif)
 
@@ -24,16 +21,6 @@ The implementation itself is not literally sweeping the sweep line through the w
 
 1) **Point Event**: The sweep line encounters a new target point, a new arc is added to the beach line tracking the boarder of the new cell
 2) **Circle Event**: The length of an arc shrinks to zero, a new vertex in the Voronoi diagram is created from where a new cell boundary starts
-
-#### Point Event
-
-The sweep line encounters target point $t_k$. The horizontal line $h_k$ going through $t_k$ is going to intersect with a parabola $p_k \in P$ to the left of the sweep line. A new parabola is introduced to the beach line at the intersection of $h_k$ and $p_k$. It is infitesimally small in the beginning and starts to grow as the sweep line progresses, tracking the equidistance level curve for the newly incorporated point $t_k$.
-
-As the sweep line progresses only in one direction, we know the order of the point events in advance. Sorting the target points in advance allows us an efficient lookup for the next point event.
-
-#### Circle Event
-
-Circle events are created on the beach line by three neighbouring target points. Each of the three points has an arc associated with it, all part of the beach line, which indicates equidistance from the closest target point and the sweep line. While all of the target points grow their cell, their respective arcs on the beach line grow with them, until one of them is "squashed" to length zero by the other two. This is going to happen at point $v_i$, which has the same distance to all three neighbours. A Voronoi vertex is created at this location and the parabola with empty length is removed, because we know that in the final diagram, a border is starting at that point.
 
 ### Pseudo Code
 
@@ -53,6 +40,16 @@ while Q is not empty:
         check and add new Circle Events
 ```
 
+#### Point Event
+
+The sweep line encounters target point $t_k$. The horizontal line $h_k$ going through $t_k$ is going to intersect with a parabola $p_k \in P$ to the left of the sweep line. A new parabola is introduced to the beach line at the intersection of $h_k$ and $p_k$. It is infitesimally small in the beginning and starts to grow as the sweep line progresses, tracking the equidistance level curve for the newly incorporated point $t_k$.
+
+As the sweep line progresses only in one direction, we know the order of the point events in advance. Sorting the target points in advance allows us an efficient lookup for the next point event.
+
+#### Circle Event
+
+Circle events are created on the beach line by three neighbouring target points. Each of the three points has an arc associated with it, all part of the beach line, which indicates equidistance from the closest target point and the sweep line. While all of the target points grow their cell, their respective arcs on the beach line grow with them, until one of them is "squashed" to length zero by the other two. This is going to happen at point $v_i$, which has the same distance to all three neighbours. A Voronoi vertex is created at this location and the parabola with empty length is removed, because we know that in the final diagram, a border is starting at that point.
+
 ## System Architecture
 
 The algorithm is made accessible through the Python interpreter and uses C++ as backend.
@@ -60,11 +57,10 @@ The main workflow is as follows:
 
 1) (Py ) Read in target points $T$ from `.csv` or `.json` file
 2) (Py ) Define bounding box (min/max coordinates + margin)
-3) (Py ) Initiate diagram computation
-4) (C++) Setup `EventQueue` with `PointEvents`
+4) (C++) Setup `EventQueue` with $T$
 5) (C++) Compute diagram
 6) (C++) Return diagram as list of vertices and edges
-7) (Py ) Visualize and save diagram
+7) (Py ) Visualize and save diagram as `.json`
 
 ### Requirements
 
@@ -78,19 +74,21 @@ The requirements of the Voronoi diagram code are:
 
 The main datastructures of Fortune's algorithm are:
 
-1. `Beachline` - keeps track and enables access to the beach-line
-2. `EventQueue` - priority queue for events
+1. `Beachline` - keeps track and enables access to the beach-line. Implemented as doubly linked list (sub-optimal)
+2. `EventQueue` - priority queue for getting next event (priority queue)
 
 The main functionalities are:
 
-1. insert and delete `PointEvent` and `CircleEvent` to `EventQueue`
-2. add and delete arc to `BeachLine`
-3. Check for new `CircleEvent`
-4. Add vertices and edges to `VoronoiDiagram`
+1. insert and delete `PointEvent` and `CircleEvent` to `EventQueue`, O(log n)
+2. add, delete and find arcs in `BeachLine`, O(n)
+3. Check for new `CircleEvent`, O(1)
+4. Add vertices and edges to `VoronoiDiagram`, O(1)
 
 ### Testing
 
-The testing environment will be setup in python to help modular development. This also means that the development of the C++ backend goes hand-in-hand with the developement of the `pybind` connector.
+Testing is done as Unit tests on the C++ level and Integration tests on the Python level.
+Running `make cpp` or `make shared`, which is compiling the project as pure cpp file or shared library, is automatically running the testcases.
+
 
 ## API Description
 
@@ -100,26 +98,25 @@ Will follow when coding has started
 
 * Build: `make`
 * Version control: `git`
-* Testing infrastructure: `pytest` and c++-feasability checks
 * Documentation: `README.md` and inline
 
 ## Schedule
 
 Week 1 (10/31): (Py ) read in points, setup testing environment
 
-Week 2 (11/7):  (C++) develop and implement datastructures (w/o functionality) for `Beachline` and `EventQueue`
+Week 2 (11/7):  (C++) develop and implement datastructures `Beachline` and `EventQueue`
 
-Week 3 (11/14): (C++) add functionality to `EventQueue`
+Week 3 (11/14): (C++) extend functionality of `EventQueue` and `BeachLine`
 
-Week 4 (11/21): (C++) add functionality to `BeachLine`
+Week 4 (11/21): (C++) extend functionality of `EventQueue` and `BeachLine`
 
-Week 5 (11/28): (Py ) finish C++ connector and implement module interface
+Week 5 (11/28): (Py ) create C++ connector and implement class wrappers
 
 Week 6 (12/5):  (Py ) testing and debugging (ongoing)
 
-Week 7 (12/12): Documentation
+Week 7 (12/12): debugging
 
-Week 8 (12/19): Presentation and buffer for previous weeks
+Week 8 (12/19): presentation and buffer
 
 ## References
 
