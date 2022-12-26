@@ -95,9 +95,32 @@ Testing is done as Unit tests on the C++ level and Integration tests on the Pyth
 Running `make cpp` or `make shared`, which is compiling the project as pure cpp file or shared library, is automatically running the testcases.
 
 
-## API Description
+## Usage
 
-Will follow when coding has started
+Build the shared library using ``make shared``, you can use ``make shared-debug`` for printing debug information.
+The C++ part of the project can be build independently using ``make cpp`` and ``make cpp-debug``.
+
+Building the C++ version triggers Unit-testing after building, whereas the shared library triggers unit- and integration tests.
+
+You can use the library by running
+```python
+    python3 compute_voronoi.py test/data/simple_input_1.json 
+```
+
+Output of ``compute_voronoi.py -h``:
+```
+Compute the Voronoi diagram of a set of points in the 2D plane
+
+positional arguments:
+  filepath_in           filepath to the set of input points, allowed types are .csv and .json
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -out FILEPATH_OUT, --filepath-out FILEPATH_OUT
+                        filepath to output the diagram to, default is 'voronoi-out.json'
+  -v [VERBOSE], --verbose [VERBOSE]
+  -d, --debug
+```
 
 ## Engineering Infrastructure
 

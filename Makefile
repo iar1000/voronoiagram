@@ -38,6 +38,7 @@ cpp-debug:
 	./$(TEST_DIR)/run_test SPDLOG_LEVEL=debug
 
 shared: $(SOURCE) $(LIB_SOURCE)
+	make cpp
 	python3 -c 'import platform; print(platform.platform())'
 	python3-config --ldflags
 	python3 -m pybind11 --includes
@@ -45,6 +46,7 @@ shared: $(SOURCE) $(LIB_SOURCE)
 	python3 $(TEST_DIR)/test_runner.py
 
 shared-debug: $(SOURCE) $(LIB_SOURCE)
+	make cpp-debug
 	python3 -c 'import platform; print(platform.platform())'
 	python3-config --ldflags
 	python3 -m pybind11 --includes
